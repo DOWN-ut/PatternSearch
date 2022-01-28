@@ -18,5 +18,11 @@
     <ClInclude Include="DIPWM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LAT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LAM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
