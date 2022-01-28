@@ -10,5 +10,6 @@ namespace PatternSearch
 	{
 	public:
 		string id;
+		int tg;
 	};
 }
