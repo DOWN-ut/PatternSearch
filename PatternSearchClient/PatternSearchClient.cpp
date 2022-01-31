@@ -1,7 +1,9 @@
 // PatternSearchClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
+#include <Windows.h>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "DIPWM.h"
 #include "LAT.h"
 #include "LAM.h"
@@ -9,11 +11,22 @@
 using namespace std;
 using namespace PatternSearch;
 
+std::string GetCurrentDirectory()
+{
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(NULL, buffer, MAX_PATH);
+    std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+
+    return std::string(buffer).substr(0, pos);
+}
+
 int main()
 {
     cout << "\n\nC O U C O U  L E S  L O U L O U S\n\n";
 
-    string file = "res://FOXP1_HUMAN.H11DI.0.A.dpwm";
+    //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
+    string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
+
     cout << "\nLecture du fichier DIPWM : " << file << endl;
 
     DIPWM FOXP1 = DIPWM(file);

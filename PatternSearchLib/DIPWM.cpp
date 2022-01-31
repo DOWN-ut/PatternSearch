@@ -27,16 +27,21 @@ namespace PatternSearch
 		return this->lat;
 	}
 
-	//
+	//Process
+
 
 
 	//Constructors
 	DIPWM::DIPWM(string filePath)
 	{
 		text = "";
+
 		ifstream file;
 		file.open(filePath);
-		while(getline(file,text)){}
+
+		string line;
+		while (getline(file, line)) { text += line; }
+
 		file.close();
 	}
 }

@@ -18,6 +18,8 @@ namespace PatternSearch
 		LAM Lam();
 		LAT Lat();
 
+		//Processors
+
 
 		//Constructors
 		DIPWM();
