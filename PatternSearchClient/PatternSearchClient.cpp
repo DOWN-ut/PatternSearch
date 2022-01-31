@@ -7,10 +7,18 @@
 #include "LAM.h"
 
 using namespace std;
+using namespace PatternSearch;
 
 int main()
 {
     cout << "\n\nC O U C O U  L E S  L O U L O U S\n\n";
+
+    string file = "res://FOXP1_HUMAN.H11DI.0.A.dpwm";
+    cout << "\nLecture du fichier DIPWM : " << file << endl;
+
+    DIPWM FOXP1 = DIPWM(file);
+
+    cout << "\nDIPWN contient : " << FOXP1.GetText() << endl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

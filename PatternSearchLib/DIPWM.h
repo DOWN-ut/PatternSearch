@@ -14,10 +14,14 @@ namespace PatternSearch
 
 		//Accessors
 		string Id();
+		string GetText();
+		LAM Lam();
+		LAT Lat();
+
 
 		//Constructors
 		DIPWM();
-		DIPWM(string text);
+		DIPWM(string file);
 
 	private:
 
