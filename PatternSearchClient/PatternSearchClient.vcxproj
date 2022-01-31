@@ -150,6 +150,11 @@
       <Project>{bcec3975-4959-4fb4-8427-1f67ee6ccc29}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\TER_L3\dipwm\pwm_single\FOXP1_HUMAN.H11DI.0.A.dpwm" />
+    <None Include="..\..\TER_L3\dipwm\pwm_single\GCR_HUMAN.H11DI.0.A.dpwm" />
+    <None Include="..\..\TER_L3\dipwm\pwm_single\OZF_HUMAN.H11DI.0.C.dpwm" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

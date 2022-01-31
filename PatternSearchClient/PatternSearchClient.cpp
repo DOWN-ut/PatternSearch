@@ -6,9 +6,11 @@
 #include "LAT.h"
 #include "LAM.h"
 
+using namespace std;
+
 int main()
 {
-    std::cout << "Hello World!\n";
+    cout << "\n\nC O U C O U  L E S  L O U L O U S\n\n";
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
