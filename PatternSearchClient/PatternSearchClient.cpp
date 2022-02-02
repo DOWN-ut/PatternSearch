@@ -31,7 +31,9 @@ int main()
 
     DIPWM FOXP1 = DIPWM(file);
 
-    cout << "\nDIPWN contient : " << FOXP1.GetText() << endl;
+    cout << "\n\nContenu du tableau :" << endl;
+
+    FOXP1.DisplayTable();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

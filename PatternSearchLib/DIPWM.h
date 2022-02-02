@@ -17,9 +17,13 @@ namespace PatternSearch
 		string GetText();
 		LAM Lam();
 		LAT Lat();
+		double Get(int x, int y);
 
 		//Processors
+		void Setup();
 
+		//Prints
+		void DisplayTable();
 
 		//Constructors
 		DIPWM();
@@ -29,6 +33,10 @@ namespace PatternSearch
 
 		string id;
 		string text;
+
+		double* arr;
+		int nCol;int nRow;
+
 		LAM lam;
 		LAT lat;
 
