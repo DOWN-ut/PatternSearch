@@ -23,7 +23,7 @@ namespace PatternSearch
 	{
 		return this->lam;
 	}
-	LAT DIPWM::Lat()
+	LAT* DIPWM::Lat()
 	{
 		return this->lat;
 	}
@@ -58,16 +58,16 @@ namespace PatternSearch
 		string buffer = ""; int col = 0;
 		for (int i = 0; i < text.length(); i++)
 		{
-			if (text[i] == '\n')	//Quand on arrive en bout de ligne, on passe à la ligne suivante
+			if (text[i] == '\n')	//Quand on arrive en bout de ligne, on passe ï¿½ la ligne suivante
 			{
 				if (id == "") { id = buffer; }			//Si l'id est encore vide, on est en train de lire de header
 				else { vect.push_back(stod(buffer));}	//Sinon, on ligne une des lignes du tableau
 				buffer = "";
 
-				if (nCol <= 0) { nCol = col; }		//On est arrivé au bout de la ligne, donc on connait le nombre de colonnes
-				nRow++;								//Et on incrémente le nombre de lignes
+				if (nCol <= 0) { nCol = col; }		//On est arrivï¿½ au bout de la ligne, donc on connait le nombre de colonnes
+				nRow++;								//Et on incrï¿½mente le nombre de lignes
 			}
-			else if (text[i] == 32 || text[i] == 9 || text[i] == ',') //Si on lit un espace ou une tabulation, on passe à la colonne suivante
+			else if (text[i] == 32 || text[i] == 9 || text[i] == ',') //Si on lit un espace ou une tabulation, on passe ï¿½ la colonne suivante
 			{
 				col++;
 				vect.push_back(stod(buffer));
@@ -83,7 +83,6 @@ namespace PatternSearch
 		for (int i = 0; i < vect.size(); i++)
 		{
 			arr[i] = vect.at(i);
-			cout << arr[i] << endl;
 		}
 	}
 
@@ -101,5 +100,6 @@ namespace PatternSearch
 		file.close();
 
 		Setup();
+		this->lat = new LAT(this->arr, this->nCol, this->nRow);
 	}
 }

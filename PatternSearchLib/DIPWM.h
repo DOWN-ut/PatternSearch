@@ -16,7 +16,7 @@ namespace PatternSearch
 		string Id();
 		string GetText();
 		LAM Lam();
-		LAT Lat();
+		LAT* Lat();
 		double Get(int x, int y);
 
 		//Processors
@@ -38,7 +38,7 @@ namespace PatternSearch
 		int nCol;int nRow;
 
 		LAM lam;
-		LAT lat;
+		LAT* lat;
 
 	};
 }

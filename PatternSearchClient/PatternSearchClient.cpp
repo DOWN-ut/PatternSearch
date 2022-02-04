@@ -33,7 +33,8 @@ int main()
 
     cout << "\n\nContenu du tableau :" << endl;
 
-    FOXP1.DisplayTable();
+    //FOXP1.DisplayTable();
+    FOXP1.Lat()->DisplayTable();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
