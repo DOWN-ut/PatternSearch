@@ -37,7 +37,7 @@ namespace PatternSearch
 		double* arr;
 		int nCol;int nRow;
 
-		LAM lam;
+		LAM* lam;
 		LAT* lat;
 
 	};

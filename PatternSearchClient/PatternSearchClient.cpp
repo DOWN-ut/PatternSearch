@@ -35,6 +35,7 @@ int main()
 
     //FOXP1.DisplayTable();
     FOXP1.Lat()->DisplayTable();
+    //FOXP1.Lam()->DisplayTable();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
