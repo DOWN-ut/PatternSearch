@@ -101,5 +101,6 @@ namespace PatternSearch
 
 		Setup();
 		this->lat = new LAT(this->arr, this->nCol, this->nRow);
+		this->lam = new LAM(this->arr, this->nCol);
 	}
 }
