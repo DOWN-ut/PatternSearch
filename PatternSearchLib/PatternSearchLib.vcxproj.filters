@@ -32,5 +32,8 @@
     <ClCompile Include="LAT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LAM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

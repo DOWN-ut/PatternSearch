@@ -15,7 +15,7 @@ namespace PatternSearch
 		//Accessors
 		string Id();
 		string GetText();
-		LAM Lam();
+		LAM* Lam();
 		LAT* Lat();
 		double Get(int x, int y);
 
@@ -28,6 +28,11 @@ namespace PatternSearch
 		//Constructors
 		DIPWM();
 		DIPWM(string file);
+
+		//Static
+		static int rowOfPair(char a, char b);
+
+		static double maxRowOf(double* arr, int nCol, int col);
 
 	private:
 

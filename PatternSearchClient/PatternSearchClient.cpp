@@ -25,7 +25,8 @@ int main()
     cout << "\n\nC O U C O U  L E S  L O U L O U S\n\n";
 
     //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
-    string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
+   //string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
+   string file = GetCurrentDirectory() + "/test.dpwm";
 
     cout << "\nLecture du fichier DIPWM : " << file << endl;
 
@@ -38,7 +39,10 @@ int main()
     cout << "\n\nContenu de la LAT :" << endl;
 
     FOXP1.Lat()->DisplayTable();
-    //FOXP1.Lam()->DisplayTable();
+
+    cout << "\n\nContenu de la LAM :" << endl;
+   
+    FOXP1.Lam()->DisplayTable();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

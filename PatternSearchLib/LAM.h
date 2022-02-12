@@ -8,9 +8,10 @@ namespace PatternSearch
 	class LAM
 	{
 		public:
+		//Setters
+		void Set(double v, int col, int row);
+
 		//Processors
-		double max4(double a, double b, double c, double d);
-		double score(int pos, int lettre, double* arr, int nCol);
 		void Setup(double* arr, int nCol);
 		void DisplayTable();
 

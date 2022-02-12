@@ -19,7 +19,7 @@ namespace PatternSearch
 	{
 		return this->text;
 	}
-	LAM DIPWM::Lam()
+	LAM* DIPWM::Lam()
 	{
 		return this->lam;
 	}
@@ -55,21 +55,26 @@ namespace PatternSearch
 		vector<double> vect = vector<double>();
 		nCol = 0; nRow = 0;
 
-		string buffer = ""; int col = 0;
+		string buffer = ""; int row = 0;
 		for (int i = 0; i < text.length(); i++)
 		{
 			if (text[i] == '\n')	//Quand on arrive en bout de ligne, on passe � la ligne suivante
 			{
-				if (id == "") { id = buffer; }			//Si l'id est encore vide, on est en train de lire de header
-				else { vect.push_back(stod(buffer));}	//Sinon, on ligne une des lignes du tableau
+				if (id == "") //Si l'id est encore vide, on est en train de lire de header
+				{ 
+					id = buffer; 
+				}			
+				else //Sinon, on ligne une des lignes du tableau
+				{
+					vect.push_back(stod(buffer));
+					if (nRow <= 0) { nRow = row+1; }		//On est arriv� au bout de la ligne, donc on connait le nombre de ligne
+					nCol++;								//Et on incr�mente le nombre de colonnes
+				}
 				buffer = "";
-
-				if (nCol <= 0) { nCol = col; }		//On est arriv� au bout de la ligne, donc on connait le nombre de colonnes
-				nRow++;								//Et on incr�mente le nombre de lignes
 			}
 			else if (text[i] == 32 || text[i] == 9 || text[i] == ',') //Si on lit un espace ou une tabulation, on passe � la colonne suivante
 			{
-				col++;
+				row++;
 				vect.push_back(stod(buffer));
 				buffer = "";
 			}
@@ -79,10 +84,18 @@ namespace PatternSearch
 			}
 		}
 
-		arr = new double[nCol * nRow];
+		arr = new double[nCol * nRow]; 
+		row = 0; int col = 0;
 		for (int i = 0; i < vect.size(); i++)
 		{
-			arr[i] = vect.at(i);
+			cout << vect.at(i) << " | ";
+			arr[col + (row * nCol)] = vect.at(i);
+			row++;
+			if (row >= (nRow) )
+			{
+				row = 0;
+				col++;
+			}
 		}
 	}
 
@@ -102,5 +115,21 @@ namespace PatternSearch
 		Setup();
 		this->lat = new LAT(this->arr, this->nCol, this->nRow);
 		this->lam = new LAM(this->arr, this->nCol);
+	}
+
+	//Static
+	int DIPWM::rowOfPair(char a, char b)
+	{
+		return 0;
+	}
+
+	double maxRowOf(double* arr, int nCol, int nRow, int col)
+	{
+		double m = 0;
+		for (int c = 0; c < nRow; c++)
+		{
+			m = max(m, arr[col + (c * nCol)]);
+		}
+		return m;
 	}
 }

@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DIPWM.cpp" />
+    <ClCompile Include="LAM.cpp" />
     <ClCompile Include="LAT.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
