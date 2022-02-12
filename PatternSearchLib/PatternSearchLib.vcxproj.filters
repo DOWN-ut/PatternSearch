@@ -29,5 +29,8 @@
     <ClCompile Include="DIPWM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LAT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

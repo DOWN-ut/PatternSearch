@@ -31,9 +31,12 @@ int main()
 
     DIPWM FOXP1 = DIPWM(file);
 
-    cout << "\n\nContenu du tableau :" << endl;
+    cout << "\n\nContenu de la matrice :" << endl;
 
-    //FOXP1.DisplayTable();
+    FOXP1.DisplayTable();
+
+    cout << "\n\nContenu de la LAT :" << endl;
+
     FOXP1.Lat()->DisplayTable();
 }
 
