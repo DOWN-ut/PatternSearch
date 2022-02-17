@@ -43,6 +43,8 @@ int main()
     cout << "\n\nContenu de la LAM :" << endl;
    
     FOXP1.Lam()->DisplayTable();
+
+    cout << "\n\nEND" << endl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

@@ -10,6 +10,7 @@ namespace PatternSearch
 		public:
 		//Setters
 		void Set(double v, int col, int row);
+		double Get(int col, int row);
 
 		//Processors
 		void Setup(double* arr, int nCol);
