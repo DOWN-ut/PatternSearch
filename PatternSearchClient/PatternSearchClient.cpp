@@ -45,6 +45,12 @@ int main()
     FOXP1.Lam()->DisplayTable();
 
     cout << "\n\nEND" << endl;
+
+    double seuil;
+    scanf("%lf", &seuil);
+    FOXP1.CalculateWords(seuil);
+
+    FOXP1.DisplayWords();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

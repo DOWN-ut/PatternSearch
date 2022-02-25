@@ -3,6 +3,7 @@
 #include <string>
 #include "LAM.h"
 #include "LAT.h"
+#include <vector>
 
 using namespace std;
 
@@ -22,8 +23,12 @@ namespace PatternSearch
 		//Processors
 		void Setup();
 
+		void CalculateWords(double seuil);
+
 		//Prints
 		void DisplayTable();
+
+		void DisplayWords();
 
 		//Constructors
 		DIPWM();
@@ -41,6 +46,11 @@ namespace PatternSearch
 
 		double* arr;
 		int nCol;int nRow;
+
+		char* words;
+		int wordCount;
+
+		void RecursiveWorder(vector<char>* vect,char* word, double seuil,int pos);
 
 		LAM* lam;
 		LAT* lat;

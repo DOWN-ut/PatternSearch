@@ -47,6 +47,19 @@ namespace PatternSearch
 		}
 	}
 
+	void DIPWM::DisplayWords()
+	{
+		cout << wordCount << " words \n";
+		for (int i = 0; i < wordCount; i+=nCol)
+		{
+			cout << "\n";
+			for (int o = 0; o < nCol; o++)
+			{
+				cout << words[i + o] << " | ";
+			}
+		}
+	}
+
 	//Process
 	void DIPWM::Setup()
 	{
@@ -99,6 +112,38 @@ namespace PatternSearch
 		}
 	}
 
+	void DIPWM::RecursiveWorder(vector<char>* vect,char* buffer,double seuil,int pos)
+	{
+		//Si on est arrivé à la dernière lettre, on ajoute ce mot à la liste
+		if (pos >= nCol)
+		{
+			//En copiant le buffer dans le vect
+			for (int i = 0; i < nCol; i++)
+			{
+				vect->push_back(buffer[i]);
+			}
+			return;
+		}
+
+
+	}
+
+	void DIPWM::CalculateWords(double seuil)
+	{
+		vector<char> vect = vector<char>();
+		char* buffer= new char[nCol];
+
+		RecursiveWorder(&vect, buffer,seuil, 0);
+
+		//Copie dans le tableau principal
+		wordCount = vect.size() / nCol;
+		words = new char[wordCount];
+		for (int i = 0; i < vect.size(); i++)
+		{
+
+		}
+	}
+
 	//Constructors
 	DIPWM::DIPWM(string filePath)
 	{
@@ -120,16 +165,20 @@ namespace PatternSearch
 	//Static
 	int DIPWM::rowOfPair(char a, char b)
 	{
-		return 0;
+		int ai =
+			a == 'A' ? 0 :
+			a == 'T' ? 1 :
+			a == 'C' ? 2 :
+			a == 'G' ? 3 : 0;
+
+		int bi = 
+			b == 'A' ? 0 :
+			b == 'T' ? 1 :
+			b == 'C' ? 2 :
+			b == 'G' ? 3 : 0;
+
+		return (ai * 4) + bi;
+
 	}
 
-	double maxRowOf(double* arr, int nCol, int nRow, int col)
-	{
-		double m = 0;
-		for (int c = 0; c < nRow; c++)
-		{
-			m = max(m, arr[col + (c * nCol)]);
-		}
-		return m;
-	}
 }
