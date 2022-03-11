@@ -51,6 +51,13 @@ namespace PatternSearch
         return Tab[col + (row * nCol)];
     }
 
+    double LAM::GetMaxValue() { return maxValue; }
+
+    double LAM::MaxOf(char c, int pos)
+    {
+        return Get(pos, (int)c);
+    }
+
     double max4(double a, double b, double c, double d)
     {
         return max(a, max(b, max(c, d)));
@@ -84,6 +91,8 @@ namespace PatternSearch
                 Set(v, c, i);
             }
         }
+
+        maxValue = max4(Get(0, 0), Get(0, 1), Get(0, 2), Get(0, 3));
     }
 
   void LAM::DisplayTable(){

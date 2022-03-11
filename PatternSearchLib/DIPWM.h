@@ -20,6 +20,9 @@ namespace PatternSearch
 		LAT* Lat();
 		double Get(int x, int y);
 
+		double ScoreOf(char c0, char c1,int pos);
+		double WordScore(char* word);
+
 		//Processors
 		void Setup();
 
@@ -35,7 +38,10 @@ namespace PatternSearch
 		DIPWM(string file);
 
 		//Static
-		static int rowOfPair(char a, char b);
+		static char CharOf(char c);
+		static char CharId(char c);
+
+		static int RowOfPair(char a, char b);
 
 		static double maxRowOf(double* arr, int nCol, int col);
 
@@ -46,11 +52,13 @@ namespace PatternSearch
 
 		double* arr;
 		int nCol;int nRow;
+		double maxValue;
 
+		int wordLength;
 		char* words;
 		int wordCount;
 
-		void RecursiveWorder(vector<char>* vect,char* word, double seuil,int pos);
+		void RecursiveWorder(vector<char>* vect,char* word, double seuil,int pos,double score);
 
 		LAM* lam;
 		LAT* lat;

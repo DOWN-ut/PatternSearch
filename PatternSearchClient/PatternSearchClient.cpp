@@ -20,9 +20,10 @@ std::string GetCurrentDirectory()
     return std::string(buffer).substr(0, pos);
 }
 
-int main()
+int main(int argc, char * args)
 {
     cout << "\n\nC O U C O U  L E S  L O U L O U S\n\n";
+
 
     //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
    //string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
@@ -44,13 +45,17 @@ int main()
    
     FOXP1.Lam()->DisplayTable();
 
-    cout << "\n\nEND" << endl;
+    cout << "\n\nEntrez un seuil (% du maximum):  ";
 
     double seuil;
-    scanf("%lf", &seuil);
+    cin >> seuil;
+    cout << endl;
+
     FOXP1.CalculateWords(seuil);
 
     FOXP1.DisplayWords();
+
+    cout << "\n\nEND" << endl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

@@ -33,10 +33,25 @@ namespace PatternSearch
 		return arr[x + (y * nCol)];
 	}
 
+	double DIPWM::ScoreOf(char c0, char c1,int pos)
+	{
+		return Get(pos,(c0*4) + c1);
+	}
+
+	double DIPWM::WordScore(char* word)
+	{
+		double s = 0;
+		for (int i = 1; i < wordLength; i++)
+		{
+			s += ScoreOf(CharId(word[i - 1]), CharId(word[i]), i - 1);
+		}
+		return s;
+	}
+
 	//Prints
 	void DIPWM::DisplayTable() 
 	{
-		cout << id << "  |  " << nCol << "x" << nRow << endl;
+		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << endl;
 		for (int y = 0; y < nRow; y++)	
 		{
 			for (int x = 0; x < nCol; x++)
@@ -49,15 +64,17 @@ namespace PatternSearch
 
 	void DIPWM::DisplayWords()
 	{
-		cout << wordCount << " words \n";
-		for (int i = 0; i < wordCount; i+=nCol)
+		cout << endl << wordCount << " words \n";
+		for (int i = 0; i < wordCount; i++)
 		{
-			cout << "\n";
-			for (int o = 0; o < nCol; o++)
+			cout << endl << " | "; double s = WordScore(&words[i * wordLength]);
+			for (int o = 0; o < wordLength; o++)
 			{
-				cout << words[i + o] << " | ";
+				cout << words[(i * wordLength) + o] << " | ";
 			}
+			cout << "= " << s;
 		}
+		cout<<endl;
 	}
 
 	//Process
@@ -112,35 +129,62 @@ namespace PatternSearch
 		}
 	}
 
-	void DIPWM::RecursiveWorder(vector<char>* vect,char* buffer,double seuil,int pos)
+	void DIPWM::RecursiveWorder(vector<char>* vect,char* buffer,double seuil,int pos,double score)
 	{
-		//Si on est arrivé à la dernière lettre, on ajoute ce mot à la liste
-		if (pos >= nCol)
+		//Si on est arrivé à la dernière lettre,
+		if (pos >= wordLength)
 		{
-			//En copiant le buffer dans le vect
-			for (int i = 0; i < nCol; i++)
+			//On ajoute ce mot à la liste, en copiant le buffer dans le vect
+			for (int i = 0; i < wordLength; i++)
 			{
 				vect->push_back(buffer[i]);
 			}
 			return;
 		}
+		else
+		{
+			for (char c = 0; c < 4; c++)
+			{
+				double nscore = score + ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
 
-
+				if ( (pos == wordLength - 1) && nscore < seuil)			//Si on est en train de placer la dernière lettre, on vérifie que le score final soit suffisant
+				{
+					continue;
+				}
+				else if (nscore + lam->MaxOf(c, pos) < seuil)	//Sinon, on vérigie que le nouveau score maximal atteignable soit suffisant
+				{
+					continue;
+				}
+				else										//Si les conditions sont remplies, on continue
+				{
+					buffer[pos] = c;
+					RecursiveWorder(vect, buffer, seuil, pos + 1, nscore);
+				}
+			}
+		}
 	}
 
 	void DIPWM::CalculateWords(double seuil)
 	{
-		vector<char> vect = vector<char>();
-		char* buffer= new char[nCol];
+		double seuilVal = seuil * maxValue;
 
-		RecursiveWorder(&vect, buffer,seuil, 0);
+		cout << "Calcul des mots avec un seuil de " << seuilVal << endl;
+
+		vector<char> vect = vector<char>();
+
+		for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
+		{
+			char* buffer = new char[wordLength];
+			buffer[0] = c;					//On initialise la première lettre du buffer
+			RecursiveWorder(&vect, buffer, seuilVal, 1, 0);
+		}
 
 		//Copie dans le tableau principal
-		wordCount = vect.size() / nCol;
-		words = new char[wordCount];
+		wordCount = vect.size() / wordLength;
+		words = new char[vect.size()];
 		for (int i = 0; i < vect.size(); i++)
 		{
-
+			words[i] = CharOf(vect.at(i));
 		}
 	}
 
@@ -160,10 +204,30 @@ namespace PatternSearch
 		Setup();
 		this->lat = new LAT(this->arr, this->nCol, this->nRow);
 		this->lam = new LAM(this->arr, this->nCol);
+
+		maxValue = lam->GetMaxValue();
+		wordLength = nCol + 1;
 	}
 
 	//Static
-	int DIPWM::rowOfPair(char a, char b)
+	char DIPWM::CharOf(char c) {
+		return
+			c == 0 ? 'A' :
+			c == 1 ? 'T' :
+			c == 2 ? 'C' :
+			c == 3 ? 'G' : '?';
+	}
+
+	char DIPWM::CharId(char c)
+	{
+		return
+			c == 'A' ? 0 :
+			c == 'T' ? 1 :
+			c == 'C' ? 2 :
+			c == 'G' ? 3 : 0;
+	}
+
+	int DIPWM::RowOfPair(char a, char b)
 	{
 		int ai =
 			a == 'A' ? 0 :
