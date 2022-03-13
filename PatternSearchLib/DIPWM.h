@@ -45,6 +45,9 @@ namespace PatternSearch
 
 		static double maxRowOf(double* arr, int nCol, int col);
 
+		//Files
+		void WriteWordsFile(double seuil, string currentLocation);
+
 	private:
 
 		string id;

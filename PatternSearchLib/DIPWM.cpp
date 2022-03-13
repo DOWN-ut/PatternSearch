@@ -86,7 +86,7 @@ namespace PatternSearch
 		nCol = 0; nRow = 0;
 
 		string buffer = ""; int row = 0;
-		for (int i = 0; i < text.length(); i++)
+		for (int i = 1; i < text.length(); i++)
 		{
 			if (text[i] == '\n')	//Quand on arrive en bout de ligne, on passe � la ligne suivante
 			{
@@ -186,6 +186,26 @@ namespace PatternSearch
 		{
 			words[i] = CharOf(vect.at(i));
 		}
+	}
+
+	//Files
+	void DIPWM::WriteWordsFile(double seuil, string currentLocation) 
+	{
+		string header = id + "	" + to_string(wordLength) + "	" + to_string(wordCount) + "	" + to_string(seuil) + '\n'; //Header : id  tailles de mots nombre de mots
+		string fileName = id + to_string(seuil) + "Words.txt";
+		string path = currentLocation + "\\" + fileName;
+
+		cout << path << endl;
+		ofstream fichier(path);
+		
+		if (fichier.bad())
+			printf("probleme creation fichier \n"); 
+
+		fichier << header << endl;
+		fichier << words;
+		
+		printf("fichier creer");
+		fichier.close();
 	}
 
 	//Constructors
