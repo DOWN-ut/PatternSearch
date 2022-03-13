@@ -201,7 +201,7 @@ namespace PatternSearch
 		if (fichier.bad())
 			printf("probleme creation fichier \n"); 
 
-		fichier << header << endl;
+		fichier << header;
 		fichier << words;
 		
 		printf("fichier creer");
