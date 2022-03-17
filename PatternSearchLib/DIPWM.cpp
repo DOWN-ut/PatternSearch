@@ -48,6 +48,8 @@ namespace PatternSearch
 		return s;
 	}
 
+	double DIPWM::UsedSeuil() { return usedSeuil; }
+
 	//Prints
 	void DIPWM::DisplayTable() 
 	{
@@ -62,7 +64,7 @@ namespace PatternSearch
 		}
 	}
 
-	void DIPWM::DisplayWords()
+	void DIPWM::DisplayWords(int count)
 	{
 		cout << endl << wordCount << " words \n";
 		for (int i = 0; i < wordCount; i++)
@@ -73,8 +75,10 @@ namespace PatternSearch
 				cout << words[(i * wordLength) + o] << " | ";
 			}
 			cout << "= " << s;
+			count--;
+			if (count == 0) { break; }
 		}
-		cout<<endl;
+		cout << endl << endl;
 	}
 
 	//Process
@@ -164,11 +168,25 @@ namespace PatternSearch
 		}
 	}
 
-	void DIPWM::CalculateWords(double seuil)
+	bool DIPWM::CalculateWords(double seuil, string currentLocation)
 	{
 		double seuilVal = seuil * maxValue;
 
-		cout << "Calcul des mots avec un seuil de " << seuilVal << endl;
+		if (currentLocation != "") 
+		{
+			cout << "Searching for a file containing word with a threshold of : " << seuilVal << endl;
+
+			if (ReadWordFile(seuilVal,currentLocation))
+			{
+				cout << "File found and data recovered : calculation aborted" << endl;
+				return false;
+			}
+		}
+		else {
+			cout << "Location is null : skipping file research" << endl;
+		}
+
+		cout << "Calculating words with a threshold of " << seuilVal << endl;
 
 		vector<char> vect = vector<char>();
 
@@ -186,25 +204,130 @@ namespace PatternSearch
 		{
 			words[i] = CharOf(vect.at(i));
 		}
+
+		usedSeuil = seuilVal;
+
+		return true;
 	}
 
 	//Files
-	void DIPWM::WriteWordsFile(double seuil, string currentLocation) 
+	string DIPWM::FileName(double seuil)
 	{
-		string header = id + "	" + to_string(wordLength) + "	" + to_string(wordCount) + "	" + to_string(seuil) + '\n'; //Header : id  tailles de mots nombre de mots
-		string fileName = id + to_string(seuil) + "Words.txt";
+		string ss = to_string(seuil).substr(0,10);
+		return id + '_' + ss + ".dpwmw";
+	}
+
+	bool DIPWM::ReadWordFile(double seuil, string currentLocation)
+	{
+		string fileName = FileName(seuil);
 		string path = currentLocation + "\\" + fileName;
 
-		cout << path << endl;
+		cout << "  |>>  Searching for file : " << path << endl;
+
+		ifstream fichier(path);
+
+		if (!fichier.good())
+		{
+			cout << "  |!!  File not found " << endl;
+			return false;
+		}
+
+		cout << "  |>>  File found : start reading" << endl;
+
+		string line; int i = 0;
+		string header = ""; string data = "";
+		while (getline(fichier, line)) 
+		{ 
+			if (i == 0)	//Header
+			{
+				header += line;
+			}
+			else //Donnees 
+			{
+				data += line;
+			}
+			i++;
+		}
+
+		if (header == "")
+		{
+			cout << "  |!!  File empty : aborting " << endl;
+			return false;
+		}
+
+		cout << "  |>>  File read : parsing data " << endl;
+
+		if(!ParsingFileData(header, data))
+		{
+			return false;
+		}
+
+		fichier.close();
+
+		return true;
+	}
+
+	bool DIPWM::ParsingFileData(string header, string data)
+	{
+		cout << "    |>>  Header : " << header << endl;
+
+		string* headerDat = new string[4]; int o = 0;
+		for (int i = 0; i < 4; i++)		//On  va remplir un par un chaque element du header
+		{
+			headerDat[i] = "";
+			while (header[o] != ' ')		//On parcourre le header jusqu'à tomber sur un séparateur
+			{
+				headerDat[i] += header[o];	//On memorise l'élement actuellement lu du header
+				o++;
+				if (o >= header.length()) { break; }
+			}
+			o++;
+		}
+
+		cout << "    |>>  ID : " << headerDat[0] << "  |  Wordcount : " << headerDat[2] << "  |  WordLength : " << headerDat[1] << "  |  Threshold : " << headerDat[3] << endl;
+		
+		wordLength = atoi(headerDat[1].c_str());
+		wordCount = atoi(headerDat[2].c_str());
+		usedSeuil = atof(headerDat[3].c_str());
+
+		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wordLength << "  |  Threshold : " << usedSeuil << endl;
+
+		int l = wordCount * wordLength;
+
+		if (l >= data.length())
+		{
+			cout << "    |!!  Recovered data is corrupted : too short " << endl;
+			return false;
+		}
+
+		words = new char[l];
+		for (int i = 0; i < l; i++)
+		{
+			words[i] = data[i];
+		}
+
+		cout << "    |>>  Data loaded successfully : ending parsing" << endl;
+
+		return true;
+	}
+
+	void DIPWM::WriteWordsFile(double seuil, string currentLocation) 
+	{
+		string header = id + ' ' + to_string(wordLength) + ' ' + to_string(wordCount) + ' ' + to_string(seuil) + '\n'; //Header : id seuil tailles de mots nombre de mots
+		string fileName = FileName(seuil);
+		string path = currentLocation + "\\" + fileName;
+
+		cout << "Writing word file at : " << path << endl;
 		ofstream fichier(path);
 		
-		if (fichier.bad())
-			printf("probleme creation fichier \n"); 
+		if (fichier.bad()) {
+			cout << "  |!!  File creation failed" << endl;
+		}
 
 		fichier << header;
 		fichier << words;
 		
-		printf("fichier creer");
+		cout << "File successfully created" << endl;
 		fichier.close();
 	}
 

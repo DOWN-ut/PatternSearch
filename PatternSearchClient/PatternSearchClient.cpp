@@ -26,14 +26,13 @@ int main(int argc, char * args)
 
 
     //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
-   //string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
-   string file = GetCurrentDirectory() + "\\" + "test.dpwm";
+   string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
+   //string file = GetCurrentDirectory() + "\\" + "test.dpwm";
 
     cout << "\nLecture du fichier DIPWM : " << file << endl;
 
     DIPWM FOXP1 = DIPWM(file);
      
-
     cout << "\n\nContenu de la matrice :" << endl;
 
     FOXP1.DisplayTable();
@@ -52,11 +51,11 @@ int main(int argc, char * args)
     cin >> seuil;
     cout << endl;
 
-    FOXP1.CalculateWords(seuil);
+    seuil = FOXP1.CalculateWords(seuil, GetCurrentDirectory());
 
-    FOXP1.DisplayWords();
+    FOXP1.DisplayWords(10);
 
-    FOXP1.WriteWordsFile(seuil, GetCurrentDirectory());
+    FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory());
 
     cout << "\n\nEND" << endl;
 }

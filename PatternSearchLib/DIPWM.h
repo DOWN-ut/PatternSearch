@@ -23,15 +23,17 @@ namespace PatternSearch
 		double ScoreOf(char c0, char c1,int pos);
 		double WordScore(char* word);
 
+		double UsedSeuil();
+
 		//Processors
 		void Setup();
 
-		void CalculateWords(double seuil);
+		bool CalculateWords(double seuil,string currentLocation); //Retourne TRUE si un calcul a du etre fait, FALSE si on a recup les donnees dans un fichier
 
 		//Prints
 		void DisplayTable();
 
-		void DisplayWords();
+		void DisplayWords(int count); //-1 pour tout afficher
 
 		//Constructors
 		DIPWM();
@@ -46,7 +48,10 @@ namespace PatternSearch
 		static double maxRowOf(double* arr, int nCol, int col);
 
 		//Files
+		bool ParsingFileData(string header, string data);
 		void WriteWordsFile(double seuil, string currentLocation);
+		bool ReadWordFile(double seuill, string currentLocation);
+		string FileName(double seuil);
 
 	private:
 
@@ -60,6 +65,7 @@ namespace PatternSearch
 		int wordLength;
 		char* words;
 		int wordCount;
+		double usedSeuil;
 
 		void RecursiveWorder(vector<char>* vect,char* word, double seuil,int pos,double score);
 
