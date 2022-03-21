@@ -57,6 +57,31 @@ int main(int argc, char * args)
 
     FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory());
 
+    cout << "\n\n Entrez le fichier contenant la sequence a analyser : " << endl;
+    string sequenceFile;
+    cin >> sequenceFile;
+    sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
+    cout << "Analyse de la sequence dans : " << sequenceFile << endl;
+
+    string sequence;
+    ifstream fichier(sequenceFile);
+    if (!fichier.good())
+    {
+        cout << "  ||>> Fichier introuvable " << endl;
+        return 0;
+    }
+
+    getline(fichier, sequence);
+
+    cout << "Sequence :  " << sequence << endl;
+
+    FOXP1.SetupSearch();
+    
+    FOXP1.Search(sequence);
+
+    //cout << "\n Resultats : \n" << endl;
+    //cout << res << endl;
+
     cout << "\n\nEND" << endl;
 }
 

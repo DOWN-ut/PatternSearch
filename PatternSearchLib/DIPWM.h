@@ -30,6 +30,10 @@ namespace PatternSearch
 
 		bool CalculateWords(double seuil,string currentLocation); //Retourne TRUE si un calcul a du etre fait, FALSE si on a recup les donnees dans un fichier
 
+		//Search
+		void SetupSearch();
+		void Search(string sequence);
+
 		//Prints
 		void DisplayTable();
 
@@ -66,6 +70,8 @@ namespace PatternSearch
 		char* words;
 		int wordCount;
 		double usedSeuil;
+
+		//trie searcher;
 
 		void RecursiveWorder(vector<char>* vect,char* word, double seuil,int pos,double score);
 

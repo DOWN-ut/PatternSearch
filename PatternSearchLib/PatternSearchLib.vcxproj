@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="aho_corasick.hpp" />
     <ClInclude Include="DIPWM.h" />
     <ClInclude Include="LAM.h" />
     <ClInclude Include="LAT.h" />

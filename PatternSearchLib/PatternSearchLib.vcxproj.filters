@@ -24,6 +24,9 @@
     <ClInclude Include="LAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="aho_corasick.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DIPWM.cpp">

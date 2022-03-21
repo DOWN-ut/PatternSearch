@@ -5,8 +5,10 @@
 #include <vector>
 #include "LAM.h"
 #include "LAT.h"
+#include "aho_corasick.hpp"
 
 using namespace std;
+using namespace aho_corasick;
 
 namespace PatternSearch
 {
@@ -208,6 +210,52 @@ namespace PatternSearch
 		usedSeuil = seuilVal;
 
 		return true;
+	}
+
+	//Search
+	void DIPWM::SetupSearch()
+	{
+		/*
+		searcher = new trie;
+		for (int i = 0; i < wordCount; i++)
+		{
+			char* word = new char[wordLength];
+			for (int o = 0; o < wordLength; o++)
+			{
+				word[o] = words[(i * wordLength) + o];
+			}
+			searcher.insert(word);
+		}
+		*/
+	}
+
+	void DIPWM::Search(string sequence) 
+	{
+		trie searcher;
+		for (int i = 0; i < wordCount; i++)
+		{
+			string word;
+			for (int o = 0; o < wordLength; o++)
+			{
+				word += words[(i * wordLength) + o];
+			}
+			searcher.insert(word);
+		}
+		auto tokens = searcher.tokenise(sequence);
+		for (const auto& token : tokens)
+		{
+			cout << token.get_emit().get_start() << "-" << token.get_emit().get_end();
+
+			if (token.is_match())
+			{
+				cout << " | " << token.get_fragment() << endl;
+			}
+			else 
+			{
+				cout << " | nope" << endl;
+			}
+		}
+		//cout << res << endl;
 	}
 
 	//Files
