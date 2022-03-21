@@ -75,12 +75,15 @@ int main(int argc, char * args)
 
     cout << "Sequence :  " << sequence << endl;
 
-    FOXP1.SetupSearch();
-    
-    FOXP1.Search(sequence);
+    vector<SearchResult> results = FOXP1.Search(sequence);
 
-    //cout << "\n Resultats : \n" << endl;
-    //cout << res << endl;
+    cout << "\n Resultats : \n" << endl;
+    
+    for (int i = 0; i < results.size();i++) 
+    {
+        SearchResult r = results.at(i);
+        cout << r.start << "-" << r.end << " >> " << r.str << endl;
+    }
 
     cout << "\n\nEND" << endl;
 }

@@ -9,6 +9,12 @@ using namespace std;
 
 namespace PatternSearch
 {
+	struct SearchResult {
+		int start;
+		int end;
+		string str;
+	};
+
 	class DIPWM
 	{
 	public:
@@ -31,8 +37,7 @@ namespace PatternSearch
 		bool CalculateWords(double seuil,string currentLocation); //Retourne TRUE si un calcul a du etre fait, FALSE si on a recup les donnees dans un fichier
 
 		//Search
-		void SetupSearch();
-		void Search(string sequence);
+		vector<SearchResult> Search(string sequence);
 
 		//Prints
 		void DisplayTable();
