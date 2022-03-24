@@ -172,7 +172,7 @@ namespace PatternSearch
 
 	bool DIPWM::CalculateWords(double seuil, string currentLocation)
 	{
-		double seuilVal = seuil * maxValue;
+		double seuilVal =  ((maxValue - minValue) * seuil) + minValue;
 
 		if (currentLocation != "") 
 		{
@@ -385,6 +385,7 @@ namespace PatternSearch
 		this->lam = new LAM(this->arr, this->nCol);
 
 		maxValue = lam->GetMaxValue();
+		minValue = 0;
 		wordLength = nCol + 1;
 	}
 
