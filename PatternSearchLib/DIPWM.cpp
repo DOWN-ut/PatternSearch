@@ -71,7 +71,7 @@ namespace PatternSearch
 		cout << endl << wordCount << " words \n";
 		for (int i = 0; i < wordCount; i++)
 		{
-			cout << endl << " | "; double s = WordScore(&words[i * wordLength]);
+			cout << endl << " | "; double s = scores[i];//WordScore(&words[i * wordLength]);
 			for (int o = 0; o < wordLength; o++)
 			{
 				cout << words[(i * wordLength) + o] << " | ";
@@ -135,7 +135,7 @@ namespace PatternSearch
 		}
 	}
 
-	void DIPWM::RecursiveWorder(vector<char>* vect,char* buffer,double seuil,int pos,double score)
+	void DIPWM::RecursiveWorder(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
 	{
 		//Si on est arrivé à la dernière lettre,
 		if (pos >= wordLength)
@@ -143,8 +143,9 @@ namespace PatternSearch
 			//On ajoute ce mot à la liste, en copiant le buffer dans le vect
 			for (int i = 0; i < wordLength; i++)
 			{
-				vect->push_back(buffer[i]);
+				vectW->push_back(buffer[i]);
 			}
+			vectS->push_back(score);
 			return;
 		}
 		else
@@ -164,7 +165,7 @@ namespace PatternSearch
 				else										//Si les conditions sont remplies, on continue
 				{
 					buffer[pos] = c;
-					RecursiveWorder(vect, buffer, seuil, pos + 1, nscore);
+					RecursiveWorder(vectW, vectS, buffer, seuil, pos + 1, nscore);
 				}
 			}
 		}
@@ -190,21 +191,27 @@ namespace PatternSearch
 
 		cout << "Calculating words with a threshold of " << seuilVal << endl;
 
-		vector<char> vect = vector<char>();
+		vector<char> vectW = vector<char>();
+		vector<float> vectS = vector<float>();
 
 		for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
 		{
 			char* buffer = new char[wordLength];
 			buffer[0] = c;					//On initialise la première lettre du buffer
-			RecursiveWorder(&vect, buffer, seuilVal, 1, 0);
+			RecursiveWorder(&vectW,&vectS, buffer, seuilVal, 1, 0);
 		}
 
 		//Copie dans le tableau principal
-		wordCount = vect.size() / wordLength;
-		words = new char[vect.size()];
-		for (int i = 0; i < vect.size(); i++)
+		wordCount = vectW.size() / wordLength;
+		words = new char[vectW.size()];
+		for (int i = 0; i < vectW.size(); i++)
 		{
-			words[i] = CharOf(vect.at(i));
+			words[i] = CharOf(vectW.at(i));
+		}
+		scores = new float[vectS.size()];
+		for (int i = 0; i < vectS.size(); i++)
+		{
+			scores[i] = vectS.at(i);
 		}
 
 		usedSeuil = seuilVal;
@@ -280,7 +287,7 @@ namespace PatternSearch
 			}
 			else //Donnees 
 			{
-				data += line;
+				data += line + '\n'; //<< On utilise getline, donc le \n est ignoré
 			}
 			i++;
 		}
@@ -337,9 +344,27 @@ namespace PatternSearch
 		}
 
 		words = new char[l];
-		for (int i = 0; i < l; i++)
+		scores = new float[wordCount];
+
+		int wid = 0;//Id du mot actuellement lu
+		int sid = 0;//Id du score actuellement lu
+		for (int i = 0; i < data.length(); i++)
 		{
-			words[i] = data[i];
+			while (data[i] != '>')
+			{
+				words[wid] = data[i];
+				i++; wid++;
+			}
+			i++; string buffer = "";
+			while (data[i] != '\n')
+			{
+				buffer += data[i];
+				i++;
+			}
+			scores[sid] = atof(buffer.c_str());
+			i++; sid++;
+
+			if (i >= l) { break; }
 		}
 
 		cout << "    |>>  Data loaded successfully : ending parsing" << endl;
@@ -361,7 +386,15 @@ namespace PatternSearch
 		}
 
 		fichier << header;
-		fichier << words;
+
+		for (int i = 0; i < wordCount; i++)
+		{
+			for (int o = 0; o < wordLength; o++)
+			{
+				fichier << words[(i * wordLength) + o];		
+			}
+			fichier << ">" << scores[i] << "\n";
+		}
 		
 		cout << "File successfully created" << endl;
 		fichier.close();

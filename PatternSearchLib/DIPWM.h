@@ -85,12 +85,13 @@ namespace PatternSearch
 
 		int wordLength;
 		char* words;
+		float* scores;
 		int wordCount;
 		double usedSeuil;
 
 		//trie searcher;
 
-		void RecursiveWorder(vector<char>* vect,char* word, double seuil,int pos,double score);
+		void RecursiveWorder(vector<char>* vect, vector<float>* vectS,char* word, double seuil,int pos,double score);
 
 		LAM* lam;
 		LAT* lat;
