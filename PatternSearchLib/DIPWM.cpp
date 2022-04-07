@@ -263,7 +263,7 @@ namespace PatternSearch
 	bool DIPWM::ReadWordFile(double seuil, string currentLocation)
 	{
 		string fileName = FileName(seuil);
-		string path = currentLocation + "\\" + fileName;
+		string path = currentLocation + "/" + fileName;
 
 		cout << "  |>>  Searching for file : " << path << endl;
 
@@ -376,7 +376,7 @@ namespace PatternSearch
 	{
 		string header = id + ' ' + to_string(wordLength) + ' ' + to_string(wordCount) + ' ' + to_string(seuil) + '\n'; //Header : id seuil tailles de mots nombre de mots
 		string fileName = FileName(seuil);
-		string path = currentLocation + "\\" + fileName;
+		string path = currentLocation + "/" + fileName;
 
 		cout << "Writing word file at : " << path << endl;
 		ofstream fichier(path);

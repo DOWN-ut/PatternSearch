@@ -1,4 +1,4 @@
-BIN=./client
+BIN=bin/client
 
 # liste des fichiers sources 
 DIPWN=PatternSearchLib/DIPWM.cpp
@@ -17,7 +17,7 @@ obj/%.o: %.cpp
 	$(DIR_GUARD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-./client: $(CLIENT:%.c=obj/%.o) $(DIPWN:%.c=obj/%.o) $(LAM:%.c=obj/%.o) $(LAT:%.c=obj/%.o) $(AHO:%.c=obj/%.o)
+bin/client: $(CLIENT:%.c=obj/%.o) $(DIPWN:%.c=obj/%.o) $(LAM:%.c=obj/%.o) $(LAT:%.c=obj/%.o) $(AHO:%.c=obj/%.o)
 	g++ -o $@ $+
 	
 clean:
