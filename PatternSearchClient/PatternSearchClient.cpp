@@ -1,23 +1,45 @@
 // PatternSearchClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-#include <Windows.h>
+#if defined(_WIN64_) || defined(_WIN32_)
+    #include <Windows.h>
+    #include "DIPWM.h"
+    #include "LAT.h"
+    #include "LAM.h"
+#else
+    #include "../PatternSearchLib/DIPWM.h"
+    #include "../PatternSearchLib/LAT.h"
+    #include "../PatternSearchLib/LAM.h"
+    #include <libgen.h>         // dirname
+    #include <unistd.h>         // readlink
+    #include <linux/limits.h>   // PATH_MAX
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "DIPWM.h"
-#include "LAT.h"
-#include "LAM.h"
 
 using namespace std;
 using namespace PatternSearch;
 
 std::string GetCurrentDirectory()
 {
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(NULL, buffer, MAX_PATH);
-    std::string::size_type pos = std::string(buffer).find_last_of("\\/");
-
-    return std::string(buffer).substr(0, pos);
+    #if defined(_WIN64_) || defined(_WIN32_)
+        char buffer[MAX_PATH];
+        GetModuleFileNameA(NULL, buffer, MAX_PATH);
+        std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+        return std::string(buffer).substr(0, pos);
+    #else
+        char result[PATH_MAX];
+        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+        const char *path;
+        if (count != -1) {
+            path = dirname(result);
+            return path;
+        }
+        else{
+            return NULL;
+        }
+    #endif
 }
 
 int main(int argc, char * args)
