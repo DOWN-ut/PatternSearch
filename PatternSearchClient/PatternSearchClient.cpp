@@ -67,6 +67,9 @@ int main(int argc, char * args)
    
     FOXP1.Lam()->DisplayTable();
 
+    cout << "Valeur maximum :" << FOXP1.Lam()->GetMaxValue() << endl;
+    cout << "Valeur minimum :" << FOXP1.Lam()->GetMinValue() << endl;
+
     cout << "\n\nEntrez un seuil (% du maximum):  ";
 
     double seuil;

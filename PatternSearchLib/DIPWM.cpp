@@ -418,7 +418,7 @@ namespace PatternSearch
 		this->lam = new LAM(this->arr, this->nCol);
 
 		maxValue = lam->GetMaxValue();
-		minValue = 0;
+		minValue = lam->GetMinValue();
 		wordLength = nCol + 1;
 	}
 
