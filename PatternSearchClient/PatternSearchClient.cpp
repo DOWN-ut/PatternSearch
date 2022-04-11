@@ -1,7 +1,7 @@
 
 // PatternSearchClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-#if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)
+#if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)  || defined(_WIN64) || defined(_WIN32)
     #include <Windows.h>
     #include "DIPWM.h"
     #include "LAT.h"
@@ -24,7 +24,7 @@ using namespace PatternSearch;
 
 std::string GetCurrentDirectory()
 {
-    #if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)
+    #if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32) || defined(_WIN64) || defined(_WIN32)
         char buffer[MAX_PATH];
         GetModuleFileNameA(NULL, buffer, MAX_PATH);
         std::string::size_type pos = std::string(buffer).find_last_of("\\/");
