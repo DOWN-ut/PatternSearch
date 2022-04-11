@@ -5,8 +5,10 @@
 #include <vector>
 #include "LAM.h"
 #include "LAT.h"
+#include "aho_corasick.hpp"
 
 using namespace std;
+using namespace aho_corasick;
 
 namespace PatternSearch
 {
@@ -33,10 +35,27 @@ namespace PatternSearch
 		return arr[x + (y * nCol)];
 	}
 
+	double DIPWM::ScoreOf(char c0, char c1,int pos)
+	{
+		return Get(pos,(c0*4) + c1);
+	}
+
+	double DIPWM::WordScore(char* word)
+	{
+		double s = 0;
+		for (int i = 1; i < wordLength; i++)
+		{
+			s += ScoreOf(CharId(word[i - 1]), CharId(word[i]), i - 1);
+		}
+		return s;
+	}
+
+	double DIPWM::UsedSeuil() { return usedSeuil; }
+
 	//Prints
 	void DIPWM::DisplayTable() 
 	{
-		cout << id << "  |  " << nCol << "x" << nRow << endl;
+		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << endl;
 		for (int y = 0; y < nRow; y++)	
 		{
 			for (int x = 0; x < nCol; x++)
@@ -45,6 +64,23 @@ namespace PatternSearch
 			}
 			cout << "\n";
 		}
+	}
+
+	void DIPWM::DisplayWords(int count)
+	{
+		cout << endl << wordCount << " words \n";
+		for (int i = 0; i < wordCount; i++)
+		{
+			cout << endl << " | "; double s = scores[i];//WordScore(&words[i * wordLength]);
+			for (int o = 0; o < wordLength; o++)
+			{
+				cout << words[(i * wordLength) + o] << " | ";
+			}
+			cout << "= " << s;
+			count--;
+			if (count == 0) { break; }
+		}
+		cout << endl << endl;
 	}
 
 	//Process
@@ -56,7 +92,7 @@ namespace PatternSearch
 		nCol = 0; nRow = 0;
 
 		string buffer = ""; int row = 0;
-		for (int i = 0; i < text.length(); i++)
+		for (int i = 1; i < text.length(); i++)
 		{
 			if (text[i] == '\n')	//Quand on arrive en bout de ligne, on passe � la ligne suivante
 			{
@@ -99,6 +135,271 @@ namespace PatternSearch
 		}
 	}
 
+	void DIPWM::RecursiveWorder(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
+	{
+		//Si on est arrivé à la dernière lettre,
+		if (pos >= wordLength)
+		{
+			//On ajoute ce mot à la liste, en copiant le buffer dans le vect
+			for (int i = 0; i < wordLength; i++)
+			{
+				vectW->push_back(buffer[i]);
+			}
+			vectS->push_back(score);
+			return;
+		}
+		else
+		{
+			for (char c = 0; c < 4; c++)
+			{
+				double nscore = score + ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
+
+				if ( (pos == wordLength - 1) && nscore < seuil)			//Si on est en train de placer la dernière lettre, on vérifie que le score final soit suffisant
+				{
+					continue;
+				}
+				else if (nscore + lam->MaxOf(c, pos) < seuil)	//Sinon, on vérigie que le nouveau score maximal atteignable soit suffisant
+				{
+					continue;
+				}
+				else										//Si les conditions sont remplies, on continue
+				{
+					buffer[pos] = c;
+					RecursiveWorder(vectW, vectS, buffer, seuil, pos + 1, nscore);
+				}
+			}
+		}
+	}
+
+	bool DIPWM::CalculateWords(double seuil, string currentLocation)
+	{
+		double seuilVal =  ((maxValue - minValue) * seuil) + minValue;
+
+		if (currentLocation != "") 
+		{
+			cout << "Searching for a file containing word with a threshold of : " << seuilVal << endl;
+
+			if (ReadWordFile(seuilVal,currentLocation))
+			{
+				cout << "File found and data recovered : calculation aborted" << endl;
+				return false;
+			}
+		}
+		else {
+			cout << "Location is null : skipping file research" << endl;
+		}
+
+		cout << "Calculating words with a threshold of " << seuilVal << endl;
+
+		vector<char> vectW = vector<char>();
+		vector<float> vectS = vector<float>();
+
+		for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
+		{
+			char* buffer = new char[wordLength];
+			buffer[0] = c;					//On initialise la première lettre du buffer
+			RecursiveWorder(&vectW,&vectS, buffer, seuilVal, 1, 0);
+		}
+
+		//Copie dans le tableau principal
+		wordCount = vectW.size() / wordLength;
+		words = new char[vectW.size()];
+		for (int i = 0; i < vectW.size(); i++)
+		{
+			words[i] = CharOf(vectW.at(i));
+		}
+		scores = new float[vectS.size()];
+		for (int i = 0; i < vectS.size(); i++)
+		{
+			scores[i] = vectS.at(i);
+		}
+
+		usedSeuil = seuilVal;
+
+		return true;
+	}
+
+	//Search
+	vector<SearchResult> DIPWM::Search(string sequence)
+	{
+		trie searcher;
+		for (int i = 0; i < wordCount; i++)
+		{
+			string word;
+			for (int o = 0; o < wordLength; o++)
+			{
+				word += words[(i * wordLength) + o];
+			}
+			searcher.insert(word);
+		}
+
+		auto tokens = searcher.tokenise(sequence);
+		vector<SearchResult> vect;
+		
+		for (const auto& token : tokens)
+		{
+			if (token.is_match())
+			{
+				SearchResult sr;
+				
+				sr.end = token.get_emit().get_end();
+				sr.start = token.get_emit().get_start();
+				sr.str = token.get_fragment();
+			
+				vect.push_back(sr);
+			}
+		}
+
+		return vect;
+	}
+
+	//Files
+	string DIPWM::FileName(double seuil)
+	{
+		string ss = to_string(seuil).substr(0,10);
+		return id + '_' + ss + ".dpwmw";
+	}
+
+	bool DIPWM::ReadWordFile(double seuil, string currentLocation)
+	{
+		string fileName = FileName(seuil);
+		string path = currentLocation + "/" + fileName;
+
+		cout << "  |>>  Searching for file : " << path << endl;
+
+		ifstream fichier(path);
+
+		if (!fichier.good())
+		{
+			cout << "  |!!  File not found " << endl;
+			return false;
+		}
+
+		cout << "  |>>  File found : start reading" << endl;
+
+		string line; int i = 0;
+		string header = ""; string data = "";
+		while (getline(fichier, line)) 
+		{ 
+			if (i == 0)	//Header
+			{
+				header += line;
+			}
+			else //Donnees 
+			{
+				data += line + '\n'; //<< On utilise getline, donc le \n est ignoré
+			}
+			i++;
+		}
+
+		if (header == "")
+		{
+			cout << "  |!!  File empty : aborting " << endl;
+			return false;
+		}
+
+		cout << "  |>>  File read : parsing data " << endl;
+
+		if(!ParsingFileData(header, data))
+		{
+			return false;
+		}
+
+		fichier.close();
+
+		return true;
+	}
+
+	bool DIPWM::ParsingFileData(string header, string data)
+	{
+		cout << "    |>>  Header : " << header << endl;
+
+		string* headerDat = new string[4]; int o = 0;
+		for (int i = 0; i < 4; i++)		//On  va remplir un par un chaque element du header
+		{
+			headerDat[i] = "";
+			while (header[o] != ' ')		//On parcourre le header jusqu'à tomber sur un séparateur
+			{
+				headerDat[i] += header[o];	//On memorise l'élement actuellement lu du header
+				o++;
+				if (o >= header.length()) { break; }
+			}
+			o++;
+		}
+
+		cout << "    |>>  ID : " << headerDat[0] << "  |  Wordcount : " << headerDat[2] << "  |  WordLength : " << headerDat[1] << "  |  Threshold : " << headerDat[3] << endl;
+		
+		wordLength = atoi(headerDat[1].c_str());
+		wordCount = atoi(headerDat[2].c_str());
+		usedSeuil = atof(headerDat[3].c_str());
+
+		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wordLength << "  |  Threshold : " << usedSeuil << endl;
+
+		int l = wordCount * wordLength;
+
+		if (l >= data.length())
+		{
+			cout << "    |!!  Recovered data is corrupted : too short " << endl;
+			return false;
+		}
+
+		words = new char[l];
+		scores = new float[wordCount];
+
+		int wid = 0;//Id du mot actuellement lu
+		int sid = 0;//Id du score actuellement lu
+		for (int i = 0; i < data.length(); i++)
+		{
+			while (data[i] != '>')
+			{
+				words[wid] = data[i];
+				i++; wid++;
+			}
+			i++; string buffer = "";
+			while (data[i] != '\n')
+			{
+				buffer += data[i];
+				i++;
+			}
+			scores[sid] = atof(buffer.c_str());
+			i++; sid++;
+
+			if (i >= l) { break; }
+		}
+
+		cout << "    |>>  Data loaded successfully : ending parsing" << endl;
+
+		return true;
+	}
+
+	void DIPWM::WriteWordsFile(double seuil, string currentLocation) 
+	{
+		string header = id + ' ' + to_string(wordLength) + ' ' + to_string(wordCount) + ' ' + to_string(seuil) + '\n'; //Header : id seuil tailles de mots nombre de mots
+		string fileName = FileName(seuil);
+		string path = currentLocation + "/" + fileName;
+
+		cout << "Writing word file at : " << path << endl;
+		ofstream fichier(path);
+		
+		if (fichier.bad()) {
+			cout << "  |!!  File creation failed" << endl;
+		}
+
+		fichier << header;
+
+		for (int i = 0; i < wordCount; i++)
+		{
+			for (int o = 0; o < wordLength; o++)
+			{
+				fichier << words[(i * wordLength) + o];		
+			}
+			fichier << ">" << scores[i] << "\n";
+		}
+		
+		cout << "File successfully created" << endl;
+		fichier.close();
+	}
+
 	//Constructors
 	DIPWM::DIPWM(string filePath)
 	{
@@ -115,21 +416,46 @@ namespace PatternSearch
 		Setup();
 		this->lat = new LAT(this->arr, this->nCol, this->nRow);
 		this->lam = new LAM(this->arr, this->nCol);
+
+		maxValue = lam->GetMaxValue();
+		minValue = lam->GetMinValue();
+		wordLength = nCol + 1;
 	}
 
 	//Static
-	int DIPWM::rowOfPair(char a, char b)
-	{
-		return 0;
+	char DIPWM::CharOf(char c) {
+		return
+			c == 0 ? 'A' :
+			c == 1 ? 'T' :
+			c == 2 ? 'C' :
+			c == 3 ? 'G' : '?';
 	}
 
-	double maxRowOf(double* arr, int nCol, int nRow, int col)
+	char DIPWM::CharId(char c)
 	{
-		double m = 0;
-		for (int c = 0; c < nRow; c++)
-		{
-			m = max(m, arr[col + (c * nCol)]);
-		}
-		return m;
+		return
+			c == 'A' ? 0 :
+			c == 'T' ? 1 :
+			c == 'C' ? 2 :
+			c == 'G' ? 3 : 0;
 	}
+
+	int DIPWM::RowOfPair(char a, char b)
+	{
+		int ai =
+			a == 'A' ? 0 :
+			a == 'T' ? 1 :
+			a == 'C' ? 2 :
+			a == 'G' ? 3 : 0;
+
+		int bi = 
+			b == 'A' ? 0 :
+			b == 'T' ? 1 :
+			b == 'C' ? 2 :
+			b == 'G' ? 3 : 0;
+
+		return (ai * 4) + bi;
+
+	}
+
 }
