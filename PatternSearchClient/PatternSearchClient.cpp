@@ -1,3 +1,4 @@
+
 // PatternSearchClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 #include <Windows.h>
@@ -22,11 +23,11 @@ std::string GetCurrentDirectory()
 
 int main()
 {
-    cout << "\n\nC O U C O U  L E S  L O U L O U S\n\n";
+    cout << "\n\nStart\n\n";
 
     //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
    //string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
-   string file = GetCurrentDirectory() + "/test.dpwm";
+   string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
 
     cout << "\nLecture du fichier DIPWM : " << file << endl;
 
