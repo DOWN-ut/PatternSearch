@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Documents\Etudes\FAC\L3\TER\PatternSearch\PatternSearchLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Yahnis\Documents\TERenum\PatternSearch\PatternSearchLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
