@@ -14,9 +14,10 @@ namespace PatternSearch
 
 		double MaxOf(char c, int pos);
 		double GetMaxValue();
+		double GetMinValue();
 
 		//Processors
-		void Setup(double* arr, int nCol);
+		void Setup(double* arr, int nCol, bool maxOrMin);
 		void DisplayTable();
 
 		//Constructors
@@ -29,5 +30,6 @@ namespace PatternSearch
 		int nRow;
 		int nCol;
 		double maxValue;
+		double minValue;
 	};
 }
