@@ -47,9 +47,22 @@ int main(int argc, char * args)
 {
     cout << "\n\nStart\n\n";
 
+       cout << "\n\n Entrez le fichier contenant la DIPWM a analyser : " << endl;
+    string DIPWMFILE;
+    cin >> DIPWMFILE;
+   string file = GetCurrentDirectory() + "/" + DIPWMFILE ;
+    cout << "Analyse de la sequence dans : " << file << endl;
 
+
+    ifstream fichierD(file);
+    if (!fichierD.good())
+    {
+        cout << "  ||>> Fichier introuvable " << endl;
+        return 0;
+    }
+    
     //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
-   string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
+
    //string file = GetCurrentDirectory() + "\\" + "test.dpwm";
 
     cout << "\nLecture du fichier DIPWM : " << file << endl;
