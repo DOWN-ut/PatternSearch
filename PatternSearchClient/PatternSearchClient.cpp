@@ -83,7 +83,7 @@ int main(int argc, char * args)
 
     FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory());
 
-    cout << "\n\n Entrez le fichier contenant la sequence a analyser : " << endl;
+    cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
     string sequenceFile;
     cin >> sequenceFile;
     sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
@@ -103,9 +103,9 @@ int main(int argc, char * args)
 
     vector<SearchResult> results = FOXP1.Search(sequence);
 
-    cout << "\n Resultats : \n" << endl;
+    cout << "\n>> " << results.size() << " resultats : \n" << endl;
     
-    for (int i = 0; i < results.size();i++) 
+    for (int i = 0; i < results.size(); i++)
     {
         SearchResult r = results.at(i);
         cout << r.start << "-" << r.end << " >> " << r.str << endl;
