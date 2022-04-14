@@ -33,6 +33,9 @@ namespace PatternSearch
 
 		//Processors
 		void Setup();
+
+		void SetupCoeur();
+		float DispersionEntre(int deb, int fin);
 		 
 		/// <summary>
 		/// Performs the enumeration of all the words with a score greater or equal to the given threshold. Check if there's already a file containing these words.
@@ -80,6 +83,9 @@ namespace PatternSearch
 
 		double* arr;
 		int nCol;int nRow;
+		
+		int coeurDeb; int coeurFin; float coeurDisp; //Index de début et de fin du coeur, et dispersion
+
 		double maxValue;
 		double minValue;
 

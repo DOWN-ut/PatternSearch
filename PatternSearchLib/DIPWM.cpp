@@ -55,7 +55,7 @@ namespace PatternSearch
 	//Prints
 	void DIPWM::DisplayTable() 
 	{
-		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << endl;
+		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << " | coeur [" << coeurDeb << "-" << coeurFin << "] disp = " << coeurDisp << endl;
 		for (int y = 0; y < nRow; y++)	
 		{
 			for (int x = 0; x < nCol; x++)
@@ -133,6 +133,39 @@ namespace PatternSearch
 				col++;
 			}
 		}
+	}
+
+	void DIPWM::SetupCoeur()
+	{
+		coeurDeb = 0; coeurFin = 1; coeurDisp = 0; //Mémorisation des valeurs optimales
+
+		for (int deb = 0; deb < nCol - 1; deb++)  //L'index de début commence à 0 et termine à nCol-2
+		{
+			for (int fin = deb + 1; fin < nCol; fin++) //L'index de fin commence à 1 et termine à nCol-1
+			{
+				float v = DispersionEntre(deb, fin);
+				if (v > coeurDisp) { coeurDisp = v; coeurDeb = deb; coeurFin = fin; }
+			}
+		}
+	}
+
+	float DIPWM::DispersionEntre(int deb, int fin)
+	{ 
+		double moyenne = 0;
+		for (int i = deb; i < fin; i++)
+		{
+			moyenne += arr[i];		
+		}
+		moyenne /= (fin - deb);
+	
+		double carres = 0;
+		for (int i = deb; i < fin; i++)
+		{
+			carres += abs(arr[i]-moyenne);
+		}
+		carres /= (fin - deb);
+
+		return sqrt(carres);
 	}
 
 	void DIPWM::RecursiveWorder(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
@@ -414,6 +447,7 @@ namespace PatternSearch
 		file.close();
 
 		Setup();
+		SetupCoeur();
 		this->lat = new LAT(this->arr, this->nCol, this->nRow);
 		this->lam = new LAM(this->arr, this->nCol);
 
