@@ -96,32 +96,39 @@ int main(int argc, char * args)
 
     FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory());
 
-    cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
-    string sequenceFile;
-    cin >> sequenceFile;
-    sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
-    cout << "Analyse de la sequence dans : " << sequenceFile << endl;
-
-    string sequence;
-    ifstream fichier(sequenceFile);
-    if (!fichier.good())
+    char loopSeq = 'y';
+    while (loopSeq = 'y') 
     {
-        cout << "  ||>> Fichier introuvable " << endl;
-        return 0;
-    }
+        cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
+        string sequenceFile;
+        cin >> sequenceFile;
+        sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
+        cout << "Analyse de la sequence dans : " << sequenceFile << endl;
 
-    getline(fichier, sequence);
+        string sequence;
+        ifstream fichier(sequenceFile);
+        if (!fichier.good())
+        {
+            cout << "  ||>> Fichier introuvable " << endl;
+            return 0;
+        }
 
-    cout << "Sequence :  " << sequence << endl;
+        getline(fichier, sequence);
 
-    vector<SearchResult> results = FOXP1.Search(sequence);
+        cout << "Sequence :  " << sequence << endl;
 
-    cout << "\n>> " << results.size() << " resultats : \n" << endl;
-    
-    for (int i = 0; i < results.size(); i++)
-    {
-        SearchResult r = results.at(i);
-        cout << r.start << "-" << r.end << " >> " << r.str << endl;
+        vector<SearchResult> results = FOXP1.Search(sequence);
+
+        cout << "\n>> " << results.size() << " resultats : \n" << endl;
+
+        for (int i = 0; i < results.size(); i++)
+        {
+            SearchResult r = results.at(i);
+            cout << r.start << "-" << r.end << " >> " << r.str << endl;
+        }
+
+        cout << "\nEntrez (y) pour analyser une nouvelle sequence" << endl;
+        cin >> loopSeq;
     }
 
     cout << "\n\nEND" << endl;
