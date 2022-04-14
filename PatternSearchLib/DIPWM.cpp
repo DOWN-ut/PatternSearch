@@ -275,11 +275,17 @@ namespace PatternSearch
 			{
 				SearchResult sr;
 				
-				sr.end = token.get_emit().get_end();
-				sr.start = token.get_emit().get_start();
-				sr.str = token.get_fragment();
-			
-				vect.push_back(sr);
+				sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
+				sr.start = token.get_emit().get_start() - coeurDeb;
+				sr.str = sequence.substr(sr.start,sr.end);
+
+				char* cstr = new char[sr.str.length() + 1];
+				strcpy(cstr, sr.str.c_str());
+				if(WordScore(cstr) >= usedSeuil)
+				{
+					vect.push_back(sr);
+				}
+				delete[] cstr;
 			}
 		}
 
