@@ -10,6 +10,9 @@
 using namespace std;
 using namespace aho_corasick;
 
+#define RESETCOLOR "\033[0m"
+#define REDCOLOR     "\033[31m" 
+
 namespace PatternSearch
 {
 	//Accessors
@@ -60,7 +63,14 @@ namespace PatternSearch
 		{
 			for (int x = 0; x < nCol; x++)
 			{
-				cout << DIPWM::Get(x, y) << "  |  ";
+				int val = (int)((DIPWM::Get(x, y) *100) / 100.0);
+
+				if (x >= coeurDeb && x <= coeurFin) { cout << REDCOLOR; }			
+
+				cout << (val >= 0 ? " " : "") << val << " | ";
+
+				if (x >= coeurDeb && x <= coeurFin) { cout << RESETCOLOR; }
+				
 			}
 			cout << "\n";
 		}
@@ -124,7 +134,6 @@ namespace PatternSearch
 		row = 0; int col = 0;
 		for (int i = 0; i < vect.size(); i++)
 		{
-			cout << vect.at(i) << " | ";
 			arr[col + (row * nCol)] = vect.at(i);
 			row++;
 			if (row >= (nRow) )
