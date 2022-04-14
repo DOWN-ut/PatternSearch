@@ -3,14 +3,14 @@
 //
 #if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)  || defined(_WIN64) || defined(_WIN32)
     #include <Windows.h>
-    #include "../PatternSearchLib/DIPWM.h"
-    #include "../PatternSearchLib/LAT.h"
-    #include "../PatternSearchLib/LAM.h"
+    #include "DIPWM.h"
+    #include "LAT.h"
+    #include "LAM.h"
 #else
     #include "../PatternSearchLib/DIPWM.h"
     #include "../PatternSearchLib/LAT.h"
     #include "../PatternSearchLib/LAM.h"
-    #include <libgen.h>         // dirname
+    #include <libgen.h>         // dirname   
     #include <unistd.h>         // readlink
     #include <linux/limits.h>   // PATH_MAX
 #endif

@@ -246,7 +246,7 @@ namespace PatternSearch
 		//Copie dans le tableau principal
 		wordCount = vectW.size() / wordLength;
 		words = new char[vectW.size()];
-		for (int i = 0; i < vectW.size(); i++)
+		for (int i = 0; i < vectW.size(); i++) 
 		{
 			words[i] = CharOf(vectW.at(i));
 		}
