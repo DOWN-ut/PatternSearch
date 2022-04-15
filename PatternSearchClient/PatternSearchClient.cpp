@@ -10,7 +10,7 @@
     #include "../PatternSearchLib/DIPWM.h"
     #include "../PatternSearchLib/LAT.h"
     #include "../PatternSearchLib/LAM.h"
-    #include <libgen.h>         // dirname
+    #include <libgen.h>         // dirname   
     #include <unistd.h>         // readlink
     #include <linux/limits.h>   // PATH_MAX
 #endif

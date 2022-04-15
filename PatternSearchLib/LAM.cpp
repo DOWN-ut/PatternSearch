@@ -103,6 +103,65 @@ namespace PatternSearch
       }
     }
 
+  void LAM::FlipTable(double* arr, int nCol){
+
+    // pour les A?
+    int add = 0;
+    for (int i = 0; i < nCol; i++){
+      for (int j = 0; j < nCol; j++){
+        if (i % 5 == 0){
+          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+        }
+        else{
+          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+        }
+      }
+      add+=3;
+    }
+
+    // pour les C?
+    add = -3;
+    for (int i = 4; i < 2*nCol; i++){
+      for (int j = 0; j < nCol; j++){
+        if (i % 5 == 0){
+          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+        }
+        else{
+          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+        }
+      }
+      add+=3;
+    }
+
+    //pour les G?
+    add = -6;
+    for (int i = 8; i < 3*nCol; i++){
+      for (int j = 0; j < nCol; j++){
+        if (i % 5 == 0){
+          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+        }
+        else{
+          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+        }
+      }
+      add+=3;
+    }
+
+    //pour les T?
+    add = -9;
+    for (int i = 12; i < 4*nCol; i++){
+      for (int j = 0; j < nCol; j++){
+        if (i % 5 == 0){
+          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+        }
+        else{
+          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+        }
+      }
+      add+=3;
+    }
+  }
+
   void LAM::DisplayTable(){
 
       cout << nCol << " x " << nRow << endl;

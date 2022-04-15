@@ -31,5 +31,7 @@ namespace PatternSearch
 		int nCol;
 		double maxValue;
 		double minValue;
+
+		double* diPinv; // à faire : intégrer au constructeur
 	};
 }
