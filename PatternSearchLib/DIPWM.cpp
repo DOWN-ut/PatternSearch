@@ -438,6 +438,8 @@ namespace PatternSearch
 			fichier << ">" << scores[i] << "\n";
 		}
 		
+		fichier << EOF;
+
 		cout << "File successfully created" << endl;
 		fichier.close();
 	}
