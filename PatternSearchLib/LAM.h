@@ -26,11 +26,11 @@ namespace PatternSearch
 		void DisplayRightTable();
 		void DisplayTable(double* arr);
 
-		void FlipTable(double* arr, int nCol);
+		void FlipTable(double* arrFrom, double* arrTo, int nCol);
 
 		//Constructors
 		LAM();
-		LAM(double* DPWM, int nCol);
+		LAM(double* DPWM, int nCol, int nRow);
 
 		private:
 
@@ -41,7 +41,5 @@ namespace PatternSearch
 		int nCol;
 		double maxValue;
 		double minValue;
-
-		double* diPinv; // à faire : intégrer au constructeur
 	};
 }

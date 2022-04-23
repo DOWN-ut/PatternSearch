@@ -47,12 +47,10 @@ int main(int argc, char * args)
 {
     cout << "\n\nStart\n\n";
 
-       cout << "\n\n Entrez le fichier contenant la DIPWM a analyser : " << endl;
+    cout << "\n\n Entrez le fichier contenant la DIPWM a analyser : " << endl;
     string DIPWMFILE;
     cin >> DIPWMFILE;
-   string file = GetCurrentDirectory() + "/" + DIPWMFILE ;
-    cout << "Analyse de la sequence dans : " << file << endl;
-
+    string file = GetCurrentDirectory() + "/" + DIPWMFILE ;
 
     ifstream fichierD(file);
     if (!fichierD.good())

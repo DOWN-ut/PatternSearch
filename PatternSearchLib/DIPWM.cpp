@@ -43,7 +43,7 @@ namespace PatternSearch
 		return Get(pos,(c0*4) + c1);
 	}
 
-	double DIPWM::WordScore(char* word)
+	const double DIPWM::WordScore(const char* word)
 	{
 		double s = 0;
 		for (int i = 1; i < wordLength; i++)
@@ -302,13 +302,10 @@ namespace PatternSearch
 				sr.start = token.get_emit().get_start() - coeurDeb;
 				sr.str = sequence.substr(sr.start,sr.end);
 
-				char* cstr = new char[sr.str.length() + 1];
-				strcpy(cstr, sr.str.c_str());
-				if(WordScore(cstr) >= usedSeuil)
+				if(WordScore(sr.str.c_str()) >= usedSeuil)
 				{
 					vect.push_back(sr);
 				}
-				delete[] cstr;
 			}
 		}
 
@@ -509,7 +506,7 @@ namespace PatternSearch
 		Setup();
 		SetupCoeur();
 		this->lat = new LAT(this->arr, this->nCol, this->nRow);
-		this->lam = new LAM(this->arr, this->nCol);
+		this->lam = new LAM(this->arr, this->nCol,this->nRow);
 
 		maxValue = lam->GetMaxValue();
 		minValue = lam->GetMinValue();

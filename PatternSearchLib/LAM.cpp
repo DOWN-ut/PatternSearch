@@ -118,17 +118,17 @@ namespace PatternSearch
       }
     }
 
-  void LAM::FlipTable(double* arr, int nCol){
+  void LAM::FlipTable(double* arrFrom,double* arrTo, int nCol){
 
     // pour les A?
     int add = 0;
     for (int i = 0; i < nCol; i++){
       for (int j = 0; j < nCol; j++){
         if (i % 5 == 0){
-          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
         }
         else{
-          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
         }
       }
       add+=3;
@@ -139,10 +139,10 @@ namespace PatternSearch
     for (int i = 4; i < 2*nCol; i++){
       for (int j = 0; j < nCol; j++){
         if (i % 5 == 0){
-          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
         }
         else{
-          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
         }
       }
       add+=3;
@@ -153,10 +153,10 @@ namespace PatternSearch
     for (int i = 8; i < 3*nCol; i++){
       for (int j = 0; j < nCol; j++){
         if (i % 5 == 0){
-          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
         }
         else{
-          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
         }
       }
       add+=3;
@@ -167,10 +167,10 @@ namespace PatternSearch
     for (int i = 12; i < 4*nCol; i++){
       for (int j = 0; j < nCol; j++){
         if (i % 5 == 0){
-          diPinv[(i*nCol) + j] = arr[(i*nCol) + j];
+            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
         }
         else{
-          diPinv[(i * nCol) + j] = arr[(i*nCol) + (add*nCol) + j];
+            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
         }
       }
       add+=3;
@@ -192,7 +192,7 @@ namespace PatternSearch
   }
 
   //Constructors
-  LAM::LAM(double* arr, int nCol){
+  LAM::LAM(double* arr, int nCol, int nr){
     this->nRow = 4;
     this->nCol = nCol;
 
@@ -202,9 +202,9 @@ namespace PatternSearch
     Setup(tabLeft, arr, nCol, false); // pour récupérer minValue en premier car la LAM négative est inutile
     Setup(tabLeft, arr, nCol, true); // on récupère ensuite la vraie LAM pour l'afficher + maxValue
 
-    double * flippedArr = new double[nCol];
-    copy_n(arr, nCol, flippedArr);
-    FlipTable(flippedArr, nCol);
+    double * flippedArr = new double[nCol * nr];
+
+    FlipTable(arr,flippedArr, nCol);
 
     Setup(tabRight, flippedArr, nCol, true);
   }

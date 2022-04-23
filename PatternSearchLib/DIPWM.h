@@ -27,7 +27,7 @@ namespace PatternSearch
 		double Get(int x, int y);
 
 		double ScoreOf(char c0, char c1,int pos);
-		double WordScore(char* word);
+		const double WordScore(const char* word);
 
 		double UsedSeuil();
 
