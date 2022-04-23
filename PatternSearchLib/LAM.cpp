@@ -204,6 +204,7 @@ namespace PatternSearch
 
     double * flippedArr = new double[nCol * nr];
 
+    return;
     FlipTable(arr,flippedArr, nCol);
 
     Setup(tabRight, flippedArr, nCol, true);
