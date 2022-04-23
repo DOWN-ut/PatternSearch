@@ -9,16 +9,24 @@ namespace PatternSearch
 	{
 		public:
 		//Setters
-		void Set(double v, int col, int row);
-		double Get(int col, int row);
+		void Set(double* toFill,double v, int col, int row);
+		double Get(double* arr, int col, int row);
+		double GetLeft(int col, int row);
+		double GetRight(int col, int row);
 
-		double MaxOf(char c, int pos);
+		double MaxLeftOf(char c, int pos);
+		double MaxRightOf(char c, int pos);
 		double GetMaxValue();
 		double GetMinValue();
 
 		//Processors
-		void Setup(double* arr, int nCol, bool maxOrMin);
-		void DisplayTable();
+		void Setup(double* toFill, double* arr, int nCol, bool maxOrMin);
+
+		void DisplayLeftTable();
+		void DisplayRightTable();
+		void DisplayTable(double* arr);
+
+		void FlipTable(double* arr, int nCol);
 
 		//Constructors
 		LAM();
@@ -26,7 +34,9 @@ namespace PatternSearch
 
 		private:
 
-		double* Tab;
+		double* tabLeft;
+		double* tabRight;
+
 		int nRow;
 		int nCol;
 		double maxValue;

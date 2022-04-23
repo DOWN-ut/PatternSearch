@@ -37,13 +37,22 @@ namespace PatternSearch
 		void SetupCoeur();
 		float DispersionEntre(int deb, int fin);
 		 
+	
 		/// <summary>
 		/// Performs the enumeration of all the words with a score greater or equal to the given threshold. Check if there's already a file containing these words.
 		/// </summary>
 		/// <param name="seuil"> : The given threshold, percentage of the max score</param>
 		/// <param name="currentLocation"> : The location of the file containing the words</param>
 		/// <returns> : True if the words were calculated, False if they were recovered in the file</returns>
-		bool CalculateWords(double seuil,string currentLocation); //Retourne TRUE si un calcul a du etre fait, FALSE si on a recup les donnees dans un fichier
+		bool EnumerateFullWords(double seuil,string currentLocation);
+
+		/// <summary>
+		/// Performs the enumeration of all the core-words with a reachable score greater or equal to the given threshold. Check if there's already a file containing these words.
+		/// </summary>
+		/// <param name="seuil"> : The given threshold, percentage of the max score</param>
+		/// <param name="currentLocation"> : The location of the file containing the words</param>
+		/// <returns> : True if the words were calculated, False if they were recovered in the file</returns>
+		bool EnumerateCoreWords(double seuil, string currentLocation);
 
 		//Search
 		/// <summary>
@@ -72,9 +81,8 @@ namespace PatternSearch
 
 		//Files
 		bool ParsingFileData(string header, string data);
-		void WriteWordsFile(double seuil, string currentLocation);
-		bool ReadWordFile(double seuill, string currentLocation);
-		string FileName(double seuil);
+		void WriteWordsFile(double seuil, string currentLocation,bool isCore);
+		bool ReadWordFile(string fileName, string currentLocation);
 
 	private:
 
@@ -84,7 +92,7 @@ namespace PatternSearch
 		double* arr;
 		int nCol;int nRow;
 		
-		int coeurDeb; int coeurFin; float coeurDisp; //Index de début et de fin du coeur, et dispersion
+		int coeurDeb; int coeurFin; int coreLenght; float coeurDisp; //Index de début et de fin du coeur, et dispersion
 
 		double maxValue;
 		double minValue;
@@ -97,7 +105,15 @@ namespace PatternSearch
 
 		//trie searcher;
 
-		void RecursiveWorder(vector<char>* vect, vector<float>* vectS,char* word, double seuil,int pos,double score);
+		void FullWordRecusion(vector<char>* vect, vector<float>* vectS,char* word, double seuil,int pos,double score);
+
+		void CoreWordRecursion(vector<char>* vect, vector<float>* vectS, char* word, double seuil, int pos, double score);
+
+		bool SearchFile(double seuil, string currentLocation,bool isCore);
+
+		string FileName(double seuil,bool isCore);
+
+		void FillEnumerationArray(vector<char> * vect, vector<float> * vectS,int wordL);
 
 		LAM* lam;
 		LAT* lat;

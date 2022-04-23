@@ -79,22 +79,38 @@ int main(int argc, char * args)
 
     cout << "\n\nContenu de la LAM :" << endl;
    
-    FOXP1.Lam()->DisplayTable();
+    FOXP1.Lam()->DisplayLeftTable();
+    FOXP1.Lam()->DisplayRightTable();
 
     cout << "Valeur maximum :" << FOXP1.Lam()->GetMaxValue() << endl;
     cout << "Valeur minimum :" << FOXP1.Lam()->GetMinValue() << endl;
 
     cout << "\n\nEntrez un seuil (% du maximum):  ";
 
-    double seuil;
-    cin >> seuil;
-    cout << endl;
+    double seuil; cin >> seuil;cout << endl;
 
-    seuil = FOXP1.CalculateWords(seuil, GetCurrentDirectory());
+    bool isCore;
+    while (true) 
+    {
+        cout << "Entrez <f> pour enumerer les mots complets, <c> pour les mots du coeur" << endl;
+
+        char mode;   cin >> mode; cout << endl;
+
+        if (mode == 'f') {
+            seuil = FOXP1.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false; break;
+        }
+        else if (mode == 'c')
+        {
+            seuil = FOXP1.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true;  break;
+        }
+        else {
+            cout << "  >>  Mauvaise entree" << endl;
+        }
+    }
 
     FOXP1.DisplayWords(10);
 
-    FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory());
+    FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory(),isCore);
 
     char loopSeq = 'y';
     while (loopSeq = 'y') 
