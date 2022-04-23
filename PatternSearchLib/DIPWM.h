@@ -105,9 +105,9 @@ namespace PatternSearch
 
 		//trie searcher;
 
-		void FullWordRecusion(vector<char>* vect, vector<float>* vectS,char* word, double seuil,int pos,double score);
+		void FullWordRecursion(vector<char>* vect, vector<float>* vectS,char* word, double seuil,int pos,double score);
 
-		void CoreWordRecursion(vector<char>* vect, vector<float>* vectS, char* word, double seuil, int pos, double score);
+		void CoreWordRecursion(vector<char>* vect, vector<float>* vectS, char* word, double seuil, int pos,  int end, double score);
 
 		bool SearchFile(double seuil, string currentLocation,bool isCore);
 

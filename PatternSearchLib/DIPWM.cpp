@@ -180,7 +180,7 @@ namespace PatternSearch
 	}
 
 	//Enumeration
-	void DIPWM::FullWordRecusion(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
+	void DIPWM::FullWordRecursion(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
 	{
 		//Si on est arrivé à la dernière lettre,
 		if (pos >= wordLength)
@@ -210,7 +210,40 @@ namespace PatternSearch
 				else										//Si les conditions sont remplies, on continue
 				{
 					buffer[pos] = c;
-					FullWordRecusion(vectW, vectS, buffer, seuil, pos + 1, nscore);
+					FullWordRecursion(vectW, vectS, buffer, seuil, pos + 1, nscore);
+				}
+			}
+		}
+	}
+
+	//Enumeration
+	void DIPWM::CoreWordRecursion(vector<char>* vectW, vector<float>* vectS, char* buffer, double seuil, int pos, int end, double score)
+	{
+		//Si on est arrivé à la dernière lettre,
+		if (pos >= end)
+		{
+			//On ajoute ce mot à la liste, en copiant le buffer dans le vect
+			for (int i = 0; i < coreLenght; i++)
+			{
+				vectW->push_back(buffer[i]);
+			}
+			vectS->push_back(score);
+			return;
+		}
+		else
+		{
+			for (char c = 0; c < 4; c++)
+			{
+				double nscore = score + ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
+
+				if (nscore + lam->MaxLeftOf(c, pos) < seuil)	//On vérifie que le nouveau score maximal atteignable soit suffisant
+				{
+					continue;
+				}
+				else										//Si les conditions sont remplies, on continue
+				{
+					buffer[pos-coeurDeb] = c;
+					CoreWordRecursion(vectW, vectS, buffer, seuil, pos + 1,end, nscore);
 				}
 			}
 		}
@@ -247,7 +280,7 @@ namespace PatternSearch
 		{
 			char* buffer = new char[wordLength];
 			buffer[0] = c;					//On initialise la première lettre du buffer
-			FullWordRecusion(&vectW, &vectS, buffer, seuilVal, 1, 0);
+			FullWordRecursion(&vectW, &vectS, buffer, seuilVal, 1, 0);
 		}
 
 		FillEnumerationArray(&vectW, &vectS,wordLength);
@@ -267,6 +300,17 @@ namespace PatternSearch
 
 		vector<char> vectW = vector<char>();
 		vector<float> vectS = vector<float>();
+
+		for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
+		{
+			double prefixScore = lam->MaxRightOf(c, coeurDeb);
+
+			if (prefixScore < seuilVal) { continue; } //Si le score atteignable avec un préfixe finissant par cette est trop faible, on s'arrete
+
+			char* buffer = new char[coreLenght];
+			buffer[0] = c;					//On initialise la première lettre du buffer
+			CoreWordRecursion(&vectW, &vectS, buffer, seuilVal, coeurDeb,coeurFin, prefixScore);
+		}
 
 		FillEnumerationArray(&vectW, &vectS, coreLenght);
 
@@ -328,7 +372,7 @@ namespace PatternSearch
 				return true;
 			}
 			else {
-				cout << "  >>  File not found : ";
+				cout << "  >>  File not found "; return false;
 			}
 		}
 		else {

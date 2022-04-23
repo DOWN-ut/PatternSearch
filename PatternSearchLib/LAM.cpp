@@ -203,7 +203,7 @@ namespace PatternSearch
     Setup(tabLeft, arr, nCol, true); // on récupère ensuite la vraie LAM pour l'afficher + maxValue
 
     double * flippedArr = new double[nCol * nr];
-
+    
     return;
     FlipTable(arr,flippedArr, nCol);
 
