@@ -168,63 +168,16 @@ namespace PatternSearch
         }
     }
 
-  void LAM::FlipTable(double* arrFrom,double* arrTo, int nCol){
-
-    // pour les A?
-    int add = 0;
-    for (int i = 0; i < nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
+    void LAM::FlipTable(double* arrFrom, double* arrTo, int nCol)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < nCol; j++)
+            {
+                int i2 = dico[i];
+                arrTo[i2 * nCol + j] = arrFrom[(i * nCol) + j];
+            }
         }
-        else{
-            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
-        }
-      }
-      add+=3;
-    }
-
-    // pour les C?
-    add = -3;
-    for (int i = 4; i < 2*nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
-        }
-        else{
-            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
-        }
-      }
-      add+=3;
-    }
-
-    //pour les G?
-    add = -6;
-    for (int i = 8; i < 3*nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
-        }
-        else{
-            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
-        }
-      }
-      add+=3;
-    }
-
-    //pour les T?
-    add = -9;
-    for (int i = 12; i < 4*nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
-  void LAM::FlipTable(double* arrFrom, double* arrTo, int nCol){
-      for(int i = 0; i < 16; i++){
-        for(int j = 0; j < nCol; j++){
-          int i2 = dico[i];
-          arrTo[i2 * nCol + j] = arrFrom[(i * nCol) + j];
-        }
-      }
     }
 
   void LAM::DisplayLeftTable() { DisplayTable(tabLeft); }
@@ -253,8 +206,7 @@ namespace PatternSearch
     SetupNormal(tabLeft, arr, nCol, true); // on récupère ensuite la vraie LAM pour l'afficher + maxValue
 
     double * flippedArr = new double[nCol * nr];
-    
-    return;
+
     FlipTable(arr,flippedArr, nCol);
 
     SetupInverse(tabRight, flippedArr, nCol);
