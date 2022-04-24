@@ -65,7 +65,7 @@ namespace PatternSearch
 		//Prints
 		void DisplayTable();
 
-		void DisplayWords(int count); //-1 pour tout afficher
+		void DisplayWords(int count, bool isCore); //-1 pour tout afficher
 
 		//Constructors
 		DIPWM();
@@ -82,7 +82,7 @@ namespace PatternSearch
 		//Files
 		bool ParsingFileData(string header, string data);
 		void WriteWordsFile(double seuil, string currentLocation,bool isCore);
-		bool ReadWordFile(string fileName, string currentLocation);
+		bool ReadWordFile(string fileName, string currentLocation,bool isCore);
 
 	private:
 

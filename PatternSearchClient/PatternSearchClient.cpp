@@ -106,7 +106,7 @@ int main(int argc, char * args)
         }
     }
 
-    FOXP1.DisplayWords(10);
+    FOXP1.DisplayWords(10,isCore);
 
     FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory(),isCore);
 

@@ -153,7 +153,7 @@ namespace PatternSearch
         }
 
         //Pour les colonnes suivantes :
-        for (int c = 1; c < nCol - 1; c++)
+        for (int c = 1; c < nCol; c++)
         {
             for (int i = 0; i < nRow; i++)
             {
@@ -174,7 +174,7 @@ namespace PatternSearch
         {
             for (int j = 0; j < nCol; j++)
             {
-                int i2 = dico[i];
+                int i2 = dico[i]; 
                 arrTo[i2 * nCol + j] = arrFrom[(i * nCol) + j];
             }
         }
@@ -182,15 +182,15 @@ namespace PatternSearch
 
   void LAM::DisplayLeftTable() { DisplayTable(tabLeft); }
   void LAM::DisplayRightTable() { DisplayTable(tabRight); }
-  void LAM::DisplayTable(double* arr){
-
+  void LAM::DisplayTable(double* arr) 
+  {
       cout << nCol << " x " << nRow << endl;
-    for(int j = 0; j < nRow; j++){
-      cout << "\n";
-      for (int i=0; i<nCol; i++){
-          cout << Get(arr,i,j) << "  |  ";
+      for (int j = 0; j < nRow; j++) {
+          cout << "\n";
+          for (int i = 0; i < nCol; i++) {
+              cout << Get(arr, i, j) << "  |  ";
+          }
       }
-    }
       cout << "\n";
   }
 

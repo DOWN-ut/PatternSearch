@@ -58,7 +58,7 @@ namespace PatternSearch
 	//Prints
 	void DIPWM::DisplayTable() 
 	{
-		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << " | coeur [" << coeurDeb << "-" << coeurFin << "] disp = " << coeurDisp << endl;
+		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << " | coeur [" << coeurDeb << "-" << coeurFin << "] [" << coreLenght << "] disp = " << coeurDisp << endl;
 		for (int y = 0; y < nRow; y++)	
 		{
 			for (int x = 0; x < nCol; x++)
@@ -76,15 +76,16 @@ namespace PatternSearch
 		}
 	}
 
-	void DIPWM::DisplayWords(int count)
+	void DIPWM::DisplayWords(int count, bool isCore)
 	{
+		int wl = isCore ? coreLenght : wordLength;
 		cout << endl << wordCount << " words \n";
 		for (int i = 0; i < wordCount; i++)
 		{
 			cout << endl << " | "; double s = scores[i];//WordScore(&words[i * wordLength]);
-			for (int o = 0; o < wordLength; o++)
+			for (int o = 0; o < wl; o++)
 			{
-				cout << words[(i * wordLength) + o] << " | ";
+				cout << words[(i * wl) + o] << " | ";
 			}
 			cout << "= " << s;
 			count--;
@@ -157,7 +158,7 @@ namespace PatternSearch
 			}
 		}
 
-		coreLenght = coeurFin - coeurDeb;
+		coreLenght = coeurFin - coeurDeb + 1;
 	}
 
 	float DIPWM::DispersionEntre(int deb, int fin)
@@ -216,11 +217,10 @@ namespace PatternSearch
 		}
 	}
 
-	//Enumeration
 	void DIPWM::CoreWordRecursion(vector<char>* vectW, vector<float>* vectS, char* buffer, double seuil, int pos, int end, double score)
 	{
 		//Si on est arrivé à la dernière lettre,
-		if (pos >= end)
+		if (pos > end)
 		{
 			//On ajoute ce mot à la liste, en copiant le buffer dans le vect
 			for (int i = 0; i < coreLenght; i++)
@@ -305,11 +305,9 @@ namespace PatternSearch
 		{
 			double prefixScore = lam->MaxRightOf(c, coeurDeb);
 
-			if (prefixScore < seuilVal) { continue; } //Si le score atteignable avec un préfixe finissant par cette est trop faible, on s'arrete
-
 			char* buffer = new char[coreLenght];
 			buffer[0] = c;					//On initialise la première lettre du buffer
-			CoreWordRecursion(&vectW, &vectS, buffer, seuilVal, coeurDeb,coeurFin, prefixScore);
+			CoreWordRecursion(&vectW, &vectS, buffer, seuilVal, coeurDeb+1,coeurFin, prefixScore);
 		}
 
 		FillEnumerationArray(&vectW, &vectS, coreLenght);
@@ -366,13 +364,13 @@ namespace PatternSearch
 
 			string fileName = FileName(seuilVal, isCore);
 
-			if (ReadWordFile(fileName, currentLocation))
+			if (ReadWordFile(fileName, currentLocation,isCore))
 			{
 				cout << "  >>  File found and data recovered : calculation canceled" << endl;
 				return true;
 			}
 			else {
-				cout << "  >>  File not found "; return false;
+				cout << "  >>  File not found " << endl; return false;
 			}
 		}
 		else {
@@ -386,14 +384,14 @@ namespace PatternSearch
 		string ss = to_string(seuil).substr(0, 10);
 
 		if (isCore) {
-			return id + "_core_" + ss + ".dipwmw";
+			return id + "_core_" + ss + ".dpwmw";
 		}
 		else {
 			return id + '_' + ss + ".dpwmw";
 		}
 	}
 
-	bool DIPWM::ReadWordFile(string fileName, string currentLocation)
+	bool DIPWM::ReadWordFile(string fileName, string currentLocation,bool isCore)
 	{
 		string path = currentLocation + "/" + fileName;
 
@@ -506,7 +504,10 @@ namespace PatternSearch
 
 	void DIPWM::WriteWordsFile(double seuil, string currentLocation,bool isCore) 
 	{
-		string header = id + ' ' + to_string(wordLength) + ' ' + to_string(wordCount) + ' ' + to_string(seuil) + '\n'; //Header : id seuil tailles de mots nombre de mots
+		int wl = isCore ? coreLenght : wordLength;
+
+		string header = id + ' ' + to_string(wl) + ' ' + to_string(wordCount) + ' ' + to_string(seuil) + '\n'; //Header : id seuil tailles de mots nombre de mots
+		
 		string fileName = FileName(seuil, isCore);
 		string path = currentLocation + "/" + fileName;
 
@@ -521,9 +522,9 @@ namespace PatternSearch
 
 		for (int i = 0; i < wordCount; i++)
 		{
-			for (int o = 0; o < wordLength; o++)
+			for (int o = 0; o < wl; o++)
 			{
-				fichier << words[(i * wordLength) + o];		
+				fichier << words[(i * wl) + o];		
 			}
 			fichier << ">" << scores[i] << "\n";
 		}
