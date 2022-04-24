@@ -131,7 +131,7 @@ int main(int argc, char * args)
 
         cout << "Sequence :  " << sequence << endl;
 
-        vector<SearchResult> results = FOXP1.Search(sequence);
+        vector<SearchResult> results = FOXP1.Search(sequence,isCore);
 
         cout << "\n>> " << results.size() << " resultats : \n" << endl;
 

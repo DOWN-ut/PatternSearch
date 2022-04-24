@@ -60,7 +60,7 @@ namespace PatternSearch
 		/// </summary>
 		/// <param name="sequence"> : The sequence to analyze</param>
 		/// <returns> : A vector containing each occurrences, with the start-index, the end-index and the word itself</returns>
-		vector<SearchResult> Search(string sequence);
+		vector<SearchResult> Search(string sequence,bool isCore);
 
 		//Prints
 		void DisplayTable();
@@ -80,7 +80,7 @@ namespace PatternSearch
 		static double maxRowOf(double* arr, int nCol, int col);
 
 		//Files
-		bool ParsingFileData(string header, string data);
+		bool ParsingFileData(string header, string data,bool isCore);
 		void WriteWordsFile(double seuil, string currentLocation,bool isCore);
 		bool ReadWordFile(string fileName, string currentLocation,bool isCore);
 

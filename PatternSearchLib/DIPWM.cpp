@@ -318,15 +318,15 @@ namespace PatternSearch
 	}
 
 	//Search
-	vector<SearchResult> DIPWM::Search(string sequence)
+	vector<SearchResult> DIPWM::Search(string sequence, bool isCore)
 	{
-		trie searcher;
+		trie searcher; int wl = isCore ? coreLenght : wordLength;
 		for (int i = 0; i < wordCount; i++)
 		{
 			string word;
-			for (int o = 0; o < wordLength; o++)
+			for (int o = 0; o < wl; o++)
 			{
-				word += words[(i * wordLength) + o];
+				word += words[(i * wl) + o];
 			}
 			searcher.insert(word);
 		}
@@ -342,7 +342,10 @@ namespace PatternSearch
 				
 				sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
 				sr.start = token.get_emit().get_start() - coeurDeb;
-				sr.str = sequence.substr(sr.start,sr.end);
+
+				if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
+
+				sr.str = sequence.substr(sr.start, sr.end);
 
 				if(WordScore(sr.str.c_str()) >= usedSeuil)
 				{
@@ -430,7 +433,7 @@ namespace PatternSearch
 
 		cout << "  |>>  File read : parsing data " << endl;
 
-		if(!ParsingFileData(header, data))
+		if(!ParsingFileData(header, data,isCore))
 		{
 			return false;
 		}
@@ -440,7 +443,7 @@ namespace PatternSearch
 		return true;
 	}
 
-	bool DIPWM::ParsingFileData(string header, string data)
+	bool DIPWM::ParsingFileData(string header, string data, bool isCore)
 	{
 		cout << "    |>>  Header : " << header << endl;
 
@@ -459,13 +462,15 @@ namespace PatternSearch
 
 		cout << "    |>>  ID : " << headerDat[0] << "  |  Wordcount : " << headerDat[2] << "  |  WordLength : " << headerDat[1] << "  |  Threshold : " << headerDat[3] << endl;
 		
-		wordLength = atoi(headerDat[1].c_str());
+		if (!isCore) { wordLength = atoi(headerDat[1].c_str()); }
+		int wl = isCore ? coreLenght : wordLength;
+
 		wordCount = atoi(headerDat[2].c_str());
 		usedSeuil = atof(headerDat[3].c_str());
 
-		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wordLength << "  |  Threshold : " << usedSeuil << endl;
+		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wl << "  |  Threshold : " << usedSeuil << endl;
 
-		int l = wordCount * wordLength;
+		int l = wordCount * wl;
 
 		if (l >= data.length())
 		{
@@ -476,7 +481,7 @@ namespace PatternSearch
 		words = new char[l];
 		scores = new float[wordCount];
 
-		int wid = 0;//Id du mot actuellement lu
+		int wid = 0;//Id de la lettre qu'on ajoute au tableau de mot
 		int sid = 0;//Id du score actuellement lu
 		for (int i = 0; i < data.length(); i++)
 		{
