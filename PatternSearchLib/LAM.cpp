@@ -54,7 +54,7 @@ namespace PatternSearch
         return min(a, min(b, min(c, d)));
     }
 
-    void LAM::Setup(double* toFill,double* arr, int nCol, bool maxOrMin) { // maxOrMin = true si on souhaite calculer la LAM basique et obtenir maxValue, maxOrMin = false pour la LAM "négative" et obtenir minValue
+    void LAM::SetupNormal(double* toFill,double* arr, int nCol, bool maxOrMin) { // maxOrMin = true si on souhaite calculer la LAM basique et obtenir maxValue, maxOrMin = false pour la LAM "négative" et obtenir minValue
 
       if(maxOrMin){
         //On remplit la derni�re colonne avec les maximums de la derni�re colonne de la matrice
@@ -116,6 +116,36 @@ namespace PatternSearch
 
         minValue = min4(Get(toFill, 0,0), Get(toFill, 0,1), Get(toFill, 0,2), Get(toFill, 0,3));
       }
+    }
+
+    void LAM::SetupInverse(double* toFill, double* arr, int nCol) { 
+
+            //On remplit la première colonne avec les maximums de la première� colonne de la matrice
+        for (int i = 0; i < nRow; i++)
+        {
+            double v = max4(
+                arr[(((4 * i)) * nCol)],
+                arr[(((4 * i) + 1) * nCol)],
+                arr[(((4 * i) + 2) * nCol)],
+                arr[(((4 * i) + 3) * nCol)]);
+
+            Set(toFill, v, 0, i);
+        }
+
+        //Pour les colonnes suivantes :
+        for (int c = 1; c < nCol - 1; c++)
+        {
+            for (int i = 0; i < nRow; i++)
+            {
+                double v = max4(
+                    arr[c + (((4 * i)) * nCol)] + Get(toFill, c - 1, 0),
+                    arr[c + (((4 * i) + 1) * nCol)] + Get(toFill, c - 1, 1),
+                    arr[c + (((4 * i) + 2) * nCol)] + Get(toFill, c - 1, 2),
+                    arr[c + (((4 * i) + 3) * nCol)] + Get(toFill, c - 1, 3));
+
+                Set(toFill, v, c, i);
+            }
+        }
     }
 
   void LAM::FlipTable(double* arrFrom,double* arrTo, int nCol){
@@ -199,14 +229,14 @@ namespace PatternSearch
     this->tabLeft = new double[nRow * nCol];
     this->tabRight = new double[nRow * nCol];
 
-    Setup(tabLeft, arr, nCol, false); // pour récupérer minValue en premier car la LAM négative est inutile
-    Setup(tabLeft, arr, nCol, true); // on récupère ensuite la vraie LAM pour l'afficher + maxValue
+    SetupNormal(tabLeft, arr, nCol, false); // pour récupérer minValue en premier car la LAM négative est inutile
+    SetupNormal(tabLeft, arr, nCol, true); // on récupère ensuite la vraie LAM pour l'afficher + maxValue
 
     double * flippedArr = new double[nCol * nr];
     
     return;
     FlipTable(arr,flippedArr, nCol);
 
-    Setup(tabRight, flippedArr, nCol, true);
+    SetupInverse(tabRight, flippedArr, nCol);
   }
 }

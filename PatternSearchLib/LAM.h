@@ -20,7 +20,8 @@ namespace PatternSearch
 		double GetMinValue();
 
 		//Processors
-		void Setup(double* toFill, double* arr, int nCol, bool maxOrMin);
+		void SetupNormal(double* toFill, double* arr, int nCol, bool maxOrMin);
+		void SetupInverse(double* toFill, double* arr, int nCol);
 
 		void DisplayLeftTable();
 		void DisplayRightTable();
