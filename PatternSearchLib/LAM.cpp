@@ -177,14 +177,6 @@ namespace PatternSearch
     }
   }
 
-  void LAM::FlipLAM(double* arrFrom, double* arrTo, int nCol){ // inversion horizontale de la LAM
-    for (int i = 0; i < nCol; i++){
-      for(int j = 0; j < nCol; j++){
-        arrTo[(i * nCol) + j] = arrFrom[(i * nCol) + nCol - 1 - j];
-      }
-    }
-  }
-
   void LAM::DisplayLeftTable() { DisplayTable(tabLeft); }
   void LAM::DisplayRightTable() { DisplayTable(tabRight); }
   void LAM::DisplayTable(double* arr){
@@ -206,8 +198,6 @@ namespace PatternSearch
 
     this->tabLeft = new double[nRow * nCol];
     this->tabRight = new double[nRow * nCol];
-
-    this->flippedTab = new double[nRow * nCol];
 
     Setup(tabLeft, arr, nCol, false); // pour récupérer minValue en premier car la LAM négative est inutile
     Setup(tabLeft, arr, nCol, true); // on récupère ensuite la vraie LAM pour l'afficher + maxValue

@@ -28,8 +28,6 @@ namespace PatternSearch
 
 		void FlipTable(double* arrFrom, double* arrTo, int nCol);
 
-		void FlipLAM(double* arrFrom, double* arrTo, int nCol);
-
 		//Constructors
 		LAM();
 		LAM(double* DPWM, int nCol, int nRow);
@@ -38,8 +36,6 @@ namespace PatternSearch
 
 		double* tabLeft;
 		double* tabRight;
-
-		double* flippedTab; // LAM inversée horizontalement
 
 		int nRow;
 		int nCol;
