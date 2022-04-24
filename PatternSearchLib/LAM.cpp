@@ -3,8 +3,28 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include <map>
 
 using namespace std;
+
+static std::map<int, int> dico = {
+      {0, 0},
+      {1, 4},
+      {2, 8},
+      {3, 12},
+      {4, 1},
+      {5, 5},
+      {6, 9},
+      {7, 13},
+      {8, 2},
+      {9, 6},
+      {10, 10},
+      {11, 14},
+      {12, 3},
+      {13, 7},
+      {14, 11},
+      {15, 15}
+    };
 
 namespace PatternSearch
 {
@@ -118,64 +138,14 @@ namespace PatternSearch
       }
     }
 
-  void LAM::FlipTable(double* arrFrom,double* arrTo, int nCol){
-
-    // pour les A?
-    int add = 0;
-    for (int i = 0; i < nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
-        }
-        else{
-            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
+  void LAM::FlipTable(double* arrFrom, double* arrTo, int nCol){
+      for(int i = 0; i < 16; i++){
+        for(int j = 0; j < nCol; j++){
+          int i2 = dico[i];
+          arrTo[i2 * nCol + j] = arrFrom[(i * nCol) + j];
         }
       }
-      add+=3;
     }
-
-    // pour les C?
-    add = -3;
-    for (int i = 4; i < 2*nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
-        }
-        else{
-            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
-        }
-      }
-      add+=3;
-    }
-
-    //pour les G?
-    add = -6;
-    for (int i = 8; i < 3*nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
-        }
-        else{
-            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
-        }
-      }
-      add+=3;
-    }
-
-    //pour les T?
-    add = -9;
-    for (int i = 12; i < 4*nCol; i++){
-      for (int j = 0; j < nCol; j++){
-        if (i % 5 == 0){
-            arrTo[(i*nCol) + j] = arrFrom[(i*nCol) + j];
-        }
-        else{
-            arrTo[(i * nCol) + j] = arrFrom[(i*nCol) + (add*nCol) + j];
-        }
-      }
-      add+=3;
-    }
-  }
 
   void LAM::DisplayLeftTable() { DisplayTable(tabLeft); }
   void LAM::DisplayRightTable() { DisplayTable(tabRight); }
