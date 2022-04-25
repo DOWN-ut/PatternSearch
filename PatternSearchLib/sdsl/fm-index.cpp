@@ -25,18 +25,18 @@ int main(int argc, char **argv)
     size_t max_locations = 5;
     size_t post_context = 10;
     size_t pre_context = 10;
-  /*  if (argc >= 3)
-    {
-        max_locations = atoi(argv[2]);
-    }
-    if (argc >= 4)
-    {
-        post_context = atoi(argv[3]);
-    }
-    if (argc >= 5)
-    {
-        pre_context = atoi(argv[4]);
-    }*/
+    /*  if (argc >= 3)
+      {
+          max_locations = atoi(argv[2]);
+      }
+      if (argc >= 4)
+      {
+          post_context = atoi(argv[3]);
+      }
+      if (argc >= 5)
+      {
+          pre_context = atoi(argv[4]);
+      }*/
     string index_suffix = ".fm9";
     string index_file = string(argv[1]) + index_suffix;
     csa_wt<wt_huff<rrr_vector<127>>, 512, 1024> fm_index; // creation de l'index methode huffman, forme rrr_vector.
@@ -61,35 +61,29 @@ int main(int argc, char **argv)
 
     ifstream source(argv[2]);
 
-    char inter_mot[200];
-    source.ignore(1000,'\t'); // ignore nom du fichier avec une taille assez grande
+    string nom_du_fichier;
+    getline(source, nom_du_fichier, ' '); // recup du nom du fichier
 
-
-    
-    char inter_taille[100]; // recupération de la taille des mots
-    source.getline(inter_taille, 1000, '\t');
-    int taille = atoi(inter_taille);
-
+    // ignore du la taille des mots
+    source.ignore(1000, ' ');
 
     char inter_nb[100]; // recupération du nombre de mots dans la liste
-    source.getline(inter_nb, 1000,'\t');
+    source.getline(inter_nb, 1000, ' ');
     int nb = atoi(inter_nb);
 
-    
-    char inter_seuil[100];
-    source.getline(inter_seuil,10000, '\n');// récupération score min
+    char inter_seuil[100];// récupération score min
+    source.getline(inter_seuil, 10000, '\n'); 
     int seuil = atoi(inter_seuil);
-
 
     int test = 0;
     for (int num_mot = 0; num_mot < nb; num_mot++)
-    {   
-    source.get(inter_mot,taille,'>');
-    source.ignore(1000,'\n');
-                                    // boucle recherche
-                                    // mot sous forme char[]
-                                    // source.getline(inter_mot,1000,'>');
-        string query(inter_mot);    // convertir char[] en string
+    {
+        string query;
+        getline(source, query, '>');
+        source.ignore(1000, '\n');
+        // boucle recherche
+        // mot sous forme char[]
+        // source.getline(inter_mot,1000,'>');
 
         size_t m = query.size();
         size_t occs = sdsl::count(fm_index, query.begin(), query.end());
