@@ -6,6 +6,7 @@
 #include "LAM.h"
 #include "LAT.h"
 #include "aho_corasick.hpp"
+#include <cmath>
 
 using namespace std;
 using namespace aho_corasick;
@@ -54,6 +55,7 @@ namespace PatternSearch
 	}
 
 	double DIPWM::UsedSeuil() { return usedSeuil; }
+	int DIPWM::WordCount() { return wordCount; }
 
 	//Prints
 	void DIPWM::DisplayTable() 
@@ -462,13 +464,15 @@ namespace PatternSearch
 
 		cout << "    |>>  ID : " << headerDat[0] << "  |  Wordcount : " << headerDat[2] << "  |  WordLength : " << headerDat[1] << "  |  Threshold : " << headerDat[3] << endl;
 		
-		if (!isCore) { wordLength = atoi(headerDat[1].c_str()); }
+		//if (!isCore) { wordLength = atoi(headerDat[1].c_str()); } inutile
 		int wl = isCore ? coreLenght : wordLength;
 
 		wordCount = atoi(headerDat[2].c_str());
 		usedSeuil = atof(headerDat[3].c_str());
 
 		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wl << "  |  Threshold : " << usedSeuil << endl;
+
+		if (wordCount <= 0) { cout << "    |!! Error : wordcount = 0 " << endl; return false; }
 
 		int l = wordCount * wl;
 

@@ -30,6 +30,7 @@ namespace PatternSearch
 		const double WordScore(const char* word);
 
 		double UsedSeuil();
+		int WordCount();
 
 		//Processors
 		void Setup();
