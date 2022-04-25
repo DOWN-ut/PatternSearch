@@ -1,6 +1,7 @@
+
 // PatternSearchClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-#if defined(_WIN64_) || defined(_WIN32_)
+#if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)  || defined(_WIN64) || defined(_WIN32)
     #include <Windows.h>
     #include "DIPWM.h"
     #include "LAT.h"
@@ -9,7 +10,7 @@
     #include "../PatternSearchLib/DIPWM.h"
     #include "../PatternSearchLib/LAT.h"
     #include "../PatternSearchLib/LAM.h"
-    #include <libgen.h>         // dirname
+    #include <libgen.h>         // dirname   
     #include <unistd.h>         // readlink
     #include <linux/limits.h>   // PATH_MAX
 #endif
@@ -23,7 +24,7 @@ using namespace PatternSearch;
 
 std::string GetCurrentDirectory()
 {
-    #if defined(_WIN64_) || defined(_WIN32_)
+    #if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32) || defined(_WIN64) || defined(_WIN32)
         char buffer[MAX_PATH];
         GetModuleFileNameA(NULL, buffer, MAX_PATH);
         std::string::size_type pos = std::string(buffer).find_last_of("\\/");
@@ -44,11 +45,22 @@ std::string GetCurrentDirectory()
 
 int main(int argc, char * args)
 {
-    cout << "\n\nC O U C O U  L E S  L O U L O U S\n\n";
+    cout << "\n\nStart\n\n";
 
+    cout << "\n\n Entrez le fichier contenant la DIPWM a analyser : " << endl;
+    string DIPWMFILE;
+    cin >> DIPWMFILE;
+    string file = GetCurrentDirectory() + "/" + DIPWMFILE ;
 
+    ifstream fichierD(file);
+    if (!fichierD.good())
+    {
+        cout << "  ||>> Fichier introuvable " << endl;
+        return 0;
+    }
+    
     //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
-   string file = GetCurrentDirectory() + "/FOXP1_HUMAN.H11DI.0.A.dpwm";
+
    //string file = GetCurrentDirectory() + "\\" + "test.dpwm";
 
     cout << "\nLecture du fichier DIPWM : " << file << endl;
@@ -65,49 +77,72 @@ int main(int argc, char * args)
 
     cout << "\n\nContenu de la LAM :" << endl;
    
-    FOXP1.Lam()->DisplayTable();
+    FOXP1.Lam()->DisplayLeftTable();
+    FOXP1.Lam()->DisplayRightTable();
 
     cout << "Valeur maximum :" << FOXP1.Lam()->GetMaxValue() << endl;
     cout << "Valeur minimum :" << FOXP1.Lam()->GetMinValue() << endl;
 
     cout << "\n\nEntrez un seuil (% du maximum):  ";
 
-    double seuil;
-    cin >> seuil;
-    cout << endl;
+    double seuil; cin >> seuil;cout << endl;
 
-    seuil = FOXP1.CalculateWords(seuil, GetCurrentDirectory());
-
-    FOXP1.DisplayWords(10);
-
-    FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory());
-
-    cout << "\n\n Entrez le fichier contenant la sequence a analyser : " << endl;
-    string sequenceFile;
-    cin >> sequenceFile;
-    sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
-    cout << "Analyse de la sequence dans : " << sequenceFile << endl;
-
-    string sequence;
-    ifstream fichier(sequenceFile);
-    if (!fichier.good())
+    bool isCore;
+    while (true) 
     {
-        cout << "  ||>> Fichier introuvable " << endl;
-        return 0;
+        cout << "Entrez <f> pour enumerer les mots complets, <c> pour les mots du coeur" << endl;
+
+        char mode;   cin >> mode; cout << endl;
+
+        if (mode == 'f') {
+            seuil = FOXP1.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false; break;
+        }
+        else if (mode == 'c')
+        {
+            seuil = FOXP1.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true;  break;
+        }
+        else {
+            cout << "  >>  Mauvaise entree" << endl;
+        }
     }
 
-    getline(fichier, sequence);
+    FOXP1.DisplayWords(10,isCore);
 
-    cout << "Sequence :  " << sequence << endl;
+    FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory(),isCore);
 
-    vector<SearchResult> results = FOXP1.Search(sequence);
-
-    cout << "\n Resultats : \n" << endl;
-    
-    for (int i = 0; i < results.size();i++) 
+    char loopSeq = 'y';
+    while (loopSeq = 'y') 
     {
-        SearchResult r = results.at(i);
-        cout << r.start << "-" << r.end << " >> " << r.str << endl;
+        cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
+        string sequenceFile;
+        cin >> sequenceFile;
+        sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
+        cout << "Analyse de la sequence dans : " << sequenceFile << endl;
+
+        string sequence;
+        ifstream fichier(sequenceFile);
+        if (!fichier.good())
+        {
+            cout << "  ||>> Fichier introuvable " << endl;
+            return 0;
+        }
+
+        getline(fichier, sequence);
+
+        cout << "Sequence :  " << sequence << endl;
+
+        vector<SearchResult> results = FOXP1.Search(sequence,isCore);
+
+        cout << "\n>> " << results.size() << " resultats : \n" << endl;
+
+        for (int i = 0; i < results.size(); i++)
+        {
+            SearchResult r = results.at(i);
+            cout << r.start << "-" << r.end << " >> " << r.str << endl;
+        }
+
+        cout << "\nEntrez (y) pour analyser une nouvelle sequence" << endl;
+        cin >> loopSeq;
     }
 
     cout << "\n\nEND" << endl;

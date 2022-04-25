@@ -10,6 +10,9 @@
 using namespace std;
 using namespace aho_corasick;
 
+#define RESETCOLOR "\033[0m"
+#define REDCOLOR     "\033[31m" 
+
 namespace PatternSearch
 {
 	//Accessors
@@ -40,7 +43,7 @@ namespace PatternSearch
 		return Get(pos,(c0*4) + c1);
 	}
 
-	double DIPWM::WordScore(char* word)
+	const double DIPWM::WordScore(const char* word)
 	{
 		double s = 0;
 		for (int i = 1; i < wordLength; i++)
@@ -55,26 +58,34 @@ namespace PatternSearch
 	//Prints
 	void DIPWM::DisplayTable() 
 	{
-		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << endl;
+		cout << id << "  |  " << nCol << "x" << nRow << "  |  max_score = " << maxValue << " | coeur [" << coeurDeb << "-" << coeurFin << "] [" << coreLenght << "] disp = " << coeurDisp << endl;
 		for (int y = 0; y < nRow; y++)	
 		{
 			for (int x = 0; x < nCol; x++)
 			{
-				cout << DIPWM::Get(x, y) << "  |  ";
+				int val = (int)((DIPWM::Get(x, y) *100) / 100.0);
+
+				if (x >= coeurDeb && x <= coeurFin) { cout << REDCOLOR; }			
+
+				cout << (val >= 0 ? " " : "") << val << " | ";
+
+				if (x >= coeurDeb && x <= coeurFin) { cout << RESETCOLOR; }
+				
 			}
 			cout << "\n";
 		}
 	}
 
-	void DIPWM::DisplayWords(int count)
+	void DIPWM::DisplayWords(int count, bool isCore)
 	{
+		int wl = isCore ? coreLenght : wordLength;
 		cout << endl << wordCount << " words \n";
 		for (int i = 0; i < wordCount; i++)
 		{
 			cout << endl << " | "; double s = scores[i];//WordScore(&words[i * wordLength]);
-			for (int o = 0; o < wordLength; o++)
+			for (int o = 0; o < wl; o++)
 			{
-				cout << words[(i * wordLength) + o] << " | ";
+				cout << words[(i * wl) + o] << " | ";
 			}
 			cout << "= " << s;
 			count--;
@@ -124,7 +135,6 @@ namespace PatternSearch
 		row = 0; int col = 0;
 		for (int i = 0; i < vect.size(); i++)
 		{
-			cout << vect.at(i) << " | ";
 			arr[col + (row * nCol)] = vect.at(i);
 			row++;
 			if (row >= (nRow) )
@@ -135,7 +145,43 @@ namespace PatternSearch
 		}
 	}
 
-	void DIPWM::RecursiveWorder(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
+	void DIPWM::SetupCoeur()
+	{
+		coeurDeb = 0; coeurFin = 1; coeurDisp = 0; //Mémorisation des valeurs optimales
+
+		for (int deb = 0; deb < nCol - 1; deb++)  //L'index de début commence à 0 et termine à nCol-2
+		{
+			for (int fin = deb + 1; fin < nCol; fin++) //L'index de fin commence à 1 et termine à nCol-1
+			{
+				float v = DispersionEntre(deb, fin);
+				if (v > coeurDisp) { coeurDisp = v; coeurDeb = deb; coeurFin = fin; }
+			}
+		}
+
+		coreLenght = coeurFin - coeurDeb + 1;
+	}
+
+	float DIPWM::DispersionEntre(int deb, int fin)
+	{ 
+		double moyenne = 0;
+		for (int i = deb; i < fin; i++)
+		{
+			moyenne += arr[i];		
+		}
+		moyenne /= (fin - deb);
+	
+		double carres = 0;
+		for (int i = deb; i < fin; i++)
+		{
+			carres += abs(arr[i]-moyenne);
+		}
+		carres /= (fin - deb);
+
+		return sqrt(carres);
+	}
+
+	//Enumeration
+	void DIPWM::FullWordRecursion(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
 	{
 		//Si on est arrivé à la dernière lettre,
 		if (pos >= wordLength)
@@ -158,36 +204,72 @@ namespace PatternSearch
 				{
 					continue;
 				}
-				else if (nscore + lam->MaxOf(c, pos) < seuil)	//Sinon, on vérigie que le nouveau score maximal atteignable soit suffisant
+				else if (nscore + lam->MaxLeftOf(c, pos) < seuil)	//Sinon, on vérigie que le nouveau score maximal atteignable soit suffisant
 				{
 					continue;
 				}
 				else										//Si les conditions sont remplies, on continue
 				{
 					buffer[pos] = c;
-					RecursiveWorder(vectW, vectS, buffer, seuil, pos + 1, nscore);
+					FullWordRecursion(vectW, vectS, buffer, seuil, pos + 1, nscore);
 				}
 			}
 		}
 	}
 
-	bool DIPWM::CalculateWords(double seuil, string currentLocation)
+	void DIPWM::CoreWordRecursion(vector<char>* vectW, vector<float>* vectS, char* buffer, double seuil, int pos, int end, double score)
+	{
+		//Si on est arrivé à la dernière lettre,
+		if (pos > end)
+		{
+			//On ajoute ce mot à la liste, en copiant le buffer dans le vect
+			for (int i = 0; i < coreLenght; i++)
+			{
+				vectW->push_back(buffer[i]);
+			}
+			vectS->push_back(score);
+			return;
+		}
+		else
+		{
+			for (char c = 0; c < 4; c++)
+			{
+				double nscore = score + ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
+
+				if (nscore + lam->MaxLeftOf(c, pos) < seuil)	//On vérifie que le nouveau score maximal atteignable soit suffisant
+				{
+					continue;
+				}
+				else										//Si les conditions sont remplies, on continue
+				{
+					buffer[pos-coeurDeb] = c;
+					CoreWordRecursion(vectW, vectS, buffer, seuil, pos + 1,end, nscore);
+				}
+			}
+		}
+	}
+
+	void DIPWM::FillEnumerationArray(vector<char>* vectW, vector<float>* vectS,int wordL)
+	{
+		//Copie dans le tableau principal
+		wordCount = vectW->size() / wordL;
+		words = new char[vectW->size()];
+		for (int i = 0; i < vectW->size(); i++)
+		{
+			words[i] = CharOf(vectW->at(i));
+		}
+		scores = new float[vectS->size()];
+		for (int i = 0; i < vectS->size(); i++)
+		{
+			scores[i] = vectS->at(i);
+		}
+	}
+
+	bool DIPWM::EnumerateFullWords(double seuil, string currentLocation)
 	{
 		double seuilVal =  ((maxValue - minValue) * seuil) + minValue;
 
-		if (currentLocation != "") 
-		{
-			cout << "Searching for a file containing word with a threshold of : " << seuilVal << endl;
-
-			if (ReadWordFile(seuilVal,currentLocation))
-			{
-				cout << "File found and data recovered : calculation aborted" << endl;
-				return false;
-			}
-		}
-		else {
-			cout << "Location is null : skipping file research" << endl;
-		}
+		if (SearchFile(seuilVal, currentLocation,false)) { return false; }
 
 		cout << "Calculating words with a threshold of " << seuilVal << endl;
 
@@ -198,21 +280,37 @@ namespace PatternSearch
 		{
 			char* buffer = new char[wordLength];
 			buffer[0] = c;					//On initialise la première lettre du buffer
-			RecursiveWorder(&vectW,&vectS, buffer, seuilVal, 1, 0);
+			FullWordRecursion(&vectW, &vectS, buffer, seuilVal, 1, 0);
 		}
 
-		//Copie dans le tableau principal
-		wordCount = vectW.size() / wordLength;
-		words = new char[vectW.size()];
-		for (int i = 0; i < vectW.size(); i++)
+		FillEnumerationArray(&vectW, &vectS,wordLength);
+
+		usedSeuil = seuilVal;
+
+		return true;
+	}
+
+	bool DIPWM::EnumerateCoreWords(double seuil, string currentLocation)
+	{
+		double seuilVal = ((maxValue - minValue) * seuil) + minValue;
+
+		if (SearchFile(seuilVal, currentLocation,true)) { return false; }
+
+		cout << "Calculating core words with a threshold of " << seuilVal << endl;
+
+		vector<char> vectW = vector<char>();
+		vector<float> vectS = vector<float>();
+
+		for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
 		{
-			words[i] = CharOf(vectW.at(i));
+			double prefixScore = lam->MaxRightOf(c, coeurDeb);
+
+			char* buffer = new char[coreLenght];
+			buffer[0] = c;					//On initialise la première lettre du buffer
+			CoreWordRecursion(&vectW, &vectS, buffer, seuilVal, coeurDeb+1,coeurFin, prefixScore);
 		}
-		scores = new float[vectS.size()];
-		for (int i = 0; i < vectS.size(); i++)
-		{
-			scores[i] = vectS.at(i);
-		}
+
+		FillEnumerationArray(&vectW, &vectS, coreLenght);
 
 		usedSeuil = seuilVal;
 
@@ -220,15 +318,15 @@ namespace PatternSearch
 	}
 
 	//Search
-	vector<SearchResult> DIPWM::Search(string sequence)
+	vector<SearchResult> DIPWM::Search(string sequence, bool isCore)
 	{
-		trie searcher;
+		trie searcher; int wl = isCore ? coreLenght : wordLength;
 		for (int i = 0; i < wordCount; i++)
 		{
 			string word;
-			for (int o = 0; o < wordLength; o++)
+			for (int o = 0; o < wl; o++)
 			{
-				word += words[(i * wordLength) + o];
+				word += words[(i * wl) + o];
 			}
 			searcher.insert(word);
 		}
@@ -242,11 +340,17 @@ namespace PatternSearch
 			{
 				SearchResult sr;
 				
-				sr.end = token.get_emit().get_end();
-				sr.start = token.get_emit().get_start();
-				sr.str = token.get_fragment();
-			
-				vect.push_back(sr);
+				sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
+				sr.start = token.get_emit().get_start() - coeurDeb;
+
+				if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
+
+				sr.str = sequence.substr(sr.start, sr.end);
+
+				if(WordScore(sr.str.c_str()) >= usedSeuil)
+				{
+					vect.push_back(sr);
+				}
 			}
 		}
 
@@ -254,15 +358,44 @@ namespace PatternSearch
 	}
 
 	//Files
-	string DIPWM::FileName(double seuil)
+
+	bool DIPWM::SearchFile(double seuilVal, string currentLocation, bool isCore)
 	{
-		string ss = to_string(seuil).substr(0,10);
-		return id + '_' + ss + ".dpwmw";
+		if (currentLocation != "")
+		{
+			cout << "Searching for a file containing " << (isCore ? "core" : "") << " words with a threshold of : " << seuilVal << endl;
+
+			string fileName = FileName(seuilVal, isCore);
+
+			if (ReadWordFile(fileName, currentLocation,isCore))
+			{
+				cout << "  >>  File found and data recovered : calculation canceled" << endl;
+				return true;
+			}
+			else {
+				cout << "  >>  File not found " << endl; return false;
+			}
+		}
+		else {
+			cout << "  >>  Location is null : skipping file research" << endl;
+			return false;
+		}
 	}
 
-	bool DIPWM::ReadWordFile(double seuil, string currentLocation)
+	string DIPWM::FileName(double seuil, bool isCore)
 	{
-		string fileName = FileName(seuil);
+		string ss = to_string(seuil).substr(0, 10);
+
+		if (isCore) {
+			return id + "_core_" + ss + ".dpwmw";
+		}
+		else {
+			return id + '_' + ss + ".dpwmw";
+		}
+	}
+
+	bool DIPWM::ReadWordFile(string fileName, string currentLocation,bool isCore)
+	{
 		string path = currentLocation + "/" + fileName;
 
 		cout << "  |>>  Searching for file : " << path << endl;
@@ -300,7 +433,7 @@ namespace PatternSearch
 
 		cout << "  |>>  File read : parsing data " << endl;
 
-		if(!ParsingFileData(header, data))
+		if(!ParsingFileData(header, data,isCore))
 		{
 			return false;
 		}
@@ -310,7 +443,7 @@ namespace PatternSearch
 		return true;
 	}
 
-	bool DIPWM::ParsingFileData(string header, string data)
+	bool DIPWM::ParsingFileData(string header, string data, bool isCore)
 	{
 		cout << "    |>>  Header : " << header << endl;
 
@@ -329,13 +462,15 @@ namespace PatternSearch
 
 		cout << "    |>>  ID : " << headerDat[0] << "  |  Wordcount : " << headerDat[2] << "  |  WordLength : " << headerDat[1] << "  |  Threshold : " << headerDat[3] << endl;
 		
-		wordLength = atoi(headerDat[1].c_str());
+		if (!isCore) { wordLength = atoi(headerDat[1].c_str()); }
+		int wl = isCore ? coreLenght : wordLength;
+
 		wordCount = atoi(headerDat[2].c_str());
 		usedSeuil = atof(headerDat[3].c_str());
 
-		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wordLength << "  |  Threshold : " << usedSeuil << endl;
+		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wl << "  |  Threshold : " << usedSeuil << endl;
 
-		int l = wordCount * wordLength;
+		int l = wordCount * wl;
 
 		if (l >= data.length())
 		{
@@ -346,7 +481,7 @@ namespace PatternSearch
 		words = new char[l];
 		scores = new float[wordCount];
 
-		int wid = 0;//Id du mot actuellement lu
+		int wid = 0;//Id de la lettre qu'on ajoute au tableau de mot
 		int sid = 0;//Id du score actuellement lu
 		for (int i = 0; i < data.length(); i++)
 		{
@@ -372,10 +507,13 @@ namespace PatternSearch
 		return true;
 	}
 
-	void DIPWM::WriteWordsFile(double seuil, string currentLocation) 
+	void DIPWM::WriteWordsFile(double seuil, string currentLocation,bool isCore) 
 	{
-		string header = id + ' ' + to_string(wordLength) + ' ' + to_string(wordCount) + ' ' + to_string(seuil) + '\n'; //Header : id seuil tailles de mots nombre de mots
-		string fileName = FileName(seuil);
+		int wl = isCore ? coreLenght : wordLength;
+
+		string header = id + ' ' + to_string(wl) + ' ' + to_string(wordCount) + ' ' + to_string(seuil) + '\n'; //Header : id seuil tailles de mots nombre de mots
+		
+		string fileName = FileName(seuil, isCore);
 		string path = currentLocation + "/" + fileName;
 
 		cout << "Writing word file at : " << path << endl;
@@ -389,13 +527,15 @@ namespace PatternSearch
 
 		for (int i = 0; i < wordCount; i++)
 		{
-			for (int o = 0; o < wordLength; o++)
+			for (int o = 0; o < wl; o++)
 			{
-				fichier << words[(i * wordLength) + o];		
+				fichier << words[(i * wl) + o];		
 			}
 			fichier << ">" << scores[i] << "\n";
 		}
 		
+		fichier << EOF;
+
 		cout << "File successfully created" << endl;
 		fichier.close();
 	}
@@ -414,8 +554,9 @@ namespace PatternSearch
 		file.close();
 
 		Setup();
+		SetupCoeur();
 		this->lat = new LAT(this->arr, this->nCol, this->nRow);
-		this->lam = new LAM(this->arr, this->nCol);
+		this->lam = new LAM(this->arr, this->nCol,this->nRow);
 
 		maxValue = lam->GetMaxValue();
 		minValue = lam->GetMinValue();
