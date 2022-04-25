@@ -121,7 +121,7 @@ int main(int argc, char * args)
     }
 
     char loopSeq = 'y';
-    while (loopSeq = 'y') 
+    while (loopSeq == 'y') 
     {
         cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
         string sequenceFile;
