@@ -84,6 +84,7 @@ namespace PatternSearch
 		bool ParsingFileData(string header, string data,bool isCore);
 		void WriteWordsFile(double seuil, string currentLocation,bool isCore);
 		bool ReadWordFile(string fileName, string currentLocation,bool isCore);
+		void WritesFinalSequenceWordsFile(vector<SearchResult> results, string currentLocation, string sequenceFile);
 
 	private:
 

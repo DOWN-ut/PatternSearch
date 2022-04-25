@@ -59,29 +59,29 @@ int main(int argc, char * args)
         return 0;
     }
     
-    //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/FOXP1_HUMAN.H11DI.0.A.dpwm";
+    //string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/motif_HUMAN.H11DI.0.A.dpwm";
 
    //string file = GetCurrentDirectory() + "\\" + "test.dpwm";
 
     cout << "\nLecture du fichier DIPWM : " << file << endl;
 
-    DIPWM FOXP1 = DIPWM(file);
+    DIPWM motif = DIPWM(file);
      
     cout << "\n\nContenu de la matrice :" << endl;
 
-    FOXP1.DisplayTable();
+    motif.DisplayTable();
 
     cout << "\n\nContenu de la LAT :" << endl;
 
-    FOXP1.Lat()->DisplayTable();
+    motif.Lat()->DisplayTable();
 
     cout << "\n\nContenu de la LAM :" << endl;
    
-    FOXP1.Lam()->DisplayLeftTable();
-    FOXP1.Lam()->DisplayRightTable();
+    motif.Lam()->DisplayLeftTable();
+    motif.Lam()->DisplayRightTable();
 
-    cout << "Valeur maximum :" << FOXP1.Lam()->GetMaxValue() << endl;
-    cout << "Valeur minimum :" << FOXP1.Lam()->GetMinValue() << endl;
+    cout << "Valeur maximum :" << motif.Lam()->GetMaxValue() << endl;
+    cout << "Valeur minimum :" << motif.Lam()->GetMinValue() << endl;
 
     bool isCore;
     while (true)
@@ -95,29 +95,29 @@ int main(int argc, char * args)
         char mode;   cin >> mode; cout << endl;
 
         if (mode == 'f') {
-            seuil = FOXP1.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false;
+            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false;
         }
         else if (mode == 'c')
         {
-            seuil = FOXP1.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true; 
+            seuil = motif.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true;
         }
         else {
             cout << "  >>  Mauvaise entree" << endl; continue;
         }
 
 
-        if (FOXP1.WordCount() <= 0) {
+        if (motif.WordCount() <= 0) {
             cout << "  >> Aucun mot genere !" << endl; continue;
         }
         else{ break; }
     }
 
-    FOXP1.DisplayWords(10,isCore);
+    motif.DisplayWords(10,isCore);
 
     cout << "\nEcrire un fichier de mots ? <y> ou <n>" << endl;
     char write; cin >> write;
     if (write == 'y') {
-        FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory(), isCore);
+        motif.WriteWordsFile(motif.UsedSeuil(), GetCurrentDirectory(), isCore);
     }
 
     char loopSeq = 'y';
@@ -126,6 +126,7 @@ int main(int argc, char * args)
         cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
         string sequenceFile;
         cin >> sequenceFile;
+        string sequenceName = sequenceFile;
         sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
         cout << "Analyse de la sequence dans : " << sequenceFile << endl;
 
@@ -141,7 +142,7 @@ int main(int argc, char * args)
 
         cout << "Sequence :  " << sequence << endl;
 
-        vector<SearchResult> results = FOXP1.Search(sequence,isCore);
+        vector<SearchResult> results = motif.Search(sequence,isCore);
 
         cout << "\n>> " << results.size() << " resultats : \n" << endl;
 
@@ -150,6 +151,8 @@ int main(int argc, char * args)
             SearchResult r = results.at(i);
             cout << r.start << "-" << r.end << " >> " << r.str << endl;
         }
+
+        motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
 
         cout << "\nEntrez (y) pour analyser une nouvelle sequence" << endl;
         cin >> loopSeq;
