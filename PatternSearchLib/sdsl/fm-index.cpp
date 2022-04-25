@@ -9,18 +9,19 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        cout << "Usage " << argv[0] << " [fichier a parcourir] [fichier liste] " << endl;
-        cout << "    This program constructs a very compact FM-index" << endl;
-        cout << "    which supports count, locate, and extract queries." << endl;
-        cout << "    text_file      Original text file." << endl;
-
+        cout << "Usage " << argv[0] << " [fichier a parcourir] [fichier liste] [nom du fichier en sortie] " << endl;
         return 1;
     }
     size_t max_locations = 5;
     size_t post_context = 10;
     size_t pre_context = 10;
+
+    string fileName = argv[3];  
+    
+    ofstream fichier(fileName);
+
 
     string index_suffix = ".fm9";
     string index_file = string(argv[1]) + index_suffix;
@@ -49,8 +50,11 @@ int main(int argc, char **argv)
     string nom_du_fichier;
     getline(source, nom_du_fichier, ' '); // recup du nom du fichier
 
-    // ignore du la taille des mots
-    source.ignore(1000, ' ');
+    char taille[100]; // recupération de la taille des mots
+    source.getline(taille, 1000, ' ');
+    int tailles = atoi(taille);
+
+ 
 
     char inter_nb[100]; // recupération du nombre de mots dans la liste
     source.getline(inter_nb, 1000, ' ');
@@ -82,6 +86,7 @@ int main(int argc, char **argv)
                 for (size_t i = 0, pre_extract = pre_context, post_extract = post_context; i < min(occs, max_locations); ++i)
                 {
                     cout << setw(8) << locations[i] << ": ";
+                    fichier << locations[i]<<"-"<<locations[i + tailles] <<" ";
                     if (pre_extract > locations[i])
                     {
                         pre_extract = locations[i];
@@ -103,6 +108,8 @@ int main(int argc, char **argv)
                     cout << "\e[0m"; // blanc
                     string context = s.substr(m);
                     cout << context.substr(0, context.find_first_of('\n')) << endl;
+
+                    fichier<<s.substr(0,m) << " "<< score<<"\n";
                 }
             
 
@@ -112,4 +119,6 @@ int main(int argc, char **argv)
         test++;
     }
     cout << test << "\n";
+
+    fichier.close();
 }
