@@ -65,7 +65,7 @@ int main(int argc, char * args)
 
     cout << "\nLecture du fichier DIPWM : " << file << endl;
 
-    DIPWM motif = DIPWM(file);
+    DIPWM motif(file);
      
     cout << "\n\nContenu de la matrice :" << endl;
 
@@ -95,7 +95,7 @@ int main(int argc, char * args)
         char mode;   cin >> mode; cout << endl;
 
         if (mode == 'f') {
-            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false;
+            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory(),true); isCore = false;
         }
         else if (mode == 'c')
         {

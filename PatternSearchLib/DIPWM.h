@@ -4,6 +4,8 @@
 #include "LAM.h"
 #include "LAT.h"
 #include <vector>
+#include <thread>
+#include <mutex>
 
 using namespace std;
 
@@ -45,7 +47,7 @@ namespace PatternSearch
 		/// <param name="seuil"> : The given threshold, percentage of the max score</param>
 		/// <param name="currentLocation"> : The location of the file containing the words</param>
 		/// <returns> : True if the words were calculated, False if they were recovered in the file</returns>
-		bool EnumerateFullWords(double seuil,string currentLocation);
+		bool EnumerateFullWords(double seuil,string currentLocation, bool displayProgression);
 
 		/// <summary>
 		/// Performs the enumeration of all the core-words with a reachable score greater or equal to the given threshold. Check if there's already a file containing these words.
@@ -107,7 +109,10 @@ namespace PatternSearch
 
 		//trie searcher;
 
-		void FullWordRecursion(vector<char>* vect, vector<float>* vectS,char* word, double seuil,int pos,double score);
+		mutex enumerationMutex;
+		int currentThreadCount;
+
+		static void FullWordRecursion(DIPWM* dipwm, vector<char>* vect, vector<float>* vectS,char* word, double seuil,int pos,double score, bool isMain);
 
 		void CoreWordRecursion(vector<char>* vect, vector<float>* vectS, char* word, double seuil, int pos,  int end, double score);
 
