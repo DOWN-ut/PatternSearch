@@ -395,7 +395,7 @@ namespace PatternSearch
 					vect.push_back(sr);
 				}
 				else {
-					sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
+					sr.end = token.get_emit().get_end() + (wordLength - coeurFin) - 1;
 					sr.start = token.get_emit().get_start() - coeurDeb;
 
 					if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
@@ -614,7 +614,7 @@ namespace PatternSearch
 			for (int i = 0; i < results.size(); i++)
 			{
 				SearchResult r = results.at(i);
-				file << r.start << "-" << r.end << " - " << r.str << endl;
+				file << r.start << "-" << r.end << "-" << r.str << endl;
 			}
 		}
 
