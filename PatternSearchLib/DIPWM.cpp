@@ -6,6 +6,7 @@
 #include "LAM.h"
 #include "LAT.h"
 #include "aho_corasick.hpp"
+#include <cmath>
 
 using namespace std;
 using namespace aho_corasick;
