@@ -6,7 +6,10 @@
 #include "LAM.h"
 #include "LAT.h"
 #include "aho_corasick.hpp"
+#if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)  || defined(_WIN64) || defined(_WIN32)
+#else
 #include <cmath>
+#endif
 
 using namespace std;
 using namespace aho_corasick;
@@ -342,16 +345,26 @@ namespace PatternSearch
 			{
 				SearchResult sr;
 				
-				sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
-				sr.start = token.get_emit().get_start() - coeurDeb;
+				if (!isCore){
+					sr.end = token.get_emit().get_end();
+					sr.start = token.get_emit().get_start();
 
-				if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
+					sr.str = token.get_fragment();
 
-				sr.str = sequence.substr(sr.start, sr.end);
-
-				if(WordScore(sr.str.c_str()) >= usedSeuil)
-				{
 					vect.push_back(sr);
+				}
+				else {
+					sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
+					sr.start = token.get_emit().get_start() - coeurDeb;
+
+					if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
+
+					sr.str = sequence.substr(sr.start, sr.end);
+
+					if (WordScore(sr.str.c_str()) >= usedSeuil)
+					{
+						vect.push_back(sr);
+					}
 				}
 			}
 		}
@@ -446,6 +459,7 @@ namespace PatternSearch
 	}
 
 	bool DIPWM::ParsingFileData(string header, string data, bool isCore)
+
 	{
 		cout << "    |>>  Header : " << header << endl;
 
