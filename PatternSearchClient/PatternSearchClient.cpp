@@ -83,32 +83,42 @@ int main(int argc, char * args)
     cout << "Valeur maximum :" << FOXP1.Lam()->GetMaxValue() << endl;
     cout << "Valeur minimum :" << FOXP1.Lam()->GetMinValue() << endl;
 
+    bool isCore;
+    while (true)
+    {
     cout << "\n\nEntrez un seuil (% du maximum):  ";
 
     double seuil; cin >> seuil;cout << endl;
 
-    bool isCore;
-    while (true) 
-    {
         cout << "Entrez <f> pour enumerer les mots complets, <c> pour les mots du coeur" << endl;
 
         char mode;   cin >> mode; cout << endl;
 
         if (mode == 'f') {
-            seuil = FOXP1.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false; break;
+            seuil = FOXP1.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false;
         }
         else if (mode == 'c')
         {
-            seuil = FOXP1.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true;  break;
+            seuil = FOXP1.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true; 
         }
         else {
-            cout << "  >>  Mauvaise entree" << endl;
+            cout << "  >>  Mauvaise entree" << endl; continue;
         }
+
+
+        if (FOXP1.WordCount() <= 0) {
+            cout << "  >> Aucun mot genere !" << endl; continue;
+        }
+        else{ break; }
     }
 
     FOXP1.DisplayWords(10,isCore);
 
-    FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory(),isCore);
+    cout << "\nEcrire un fichier de mots ? <y> ou <n>" << endl;
+    char write; cin >> write;
+    if (write == 'y') {
+        FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory(), isCore);
+    }
 
     char loopSeq = 'y';
     while (loopSeq = 'y') 

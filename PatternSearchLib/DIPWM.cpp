@@ -54,6 +54,7 @@ namespace PatternSearch
 	}
 
 	double DIPWM::UsedSeuil() { return usedSeuil; }
+	int DIPWM::WordCount() { return wordCount; }
 
 	//Prints
 	void DIPWM::DisplayTable() 
