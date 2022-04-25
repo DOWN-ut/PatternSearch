@@ -352,11 +352,8 @@ namespace PatternSearch
 					sr.str = token.get_fragment();
 
 					vect.push_back(sr);
-					cout << sr.str << endl;
 				}
 				else {
-					cout << "efer" << endl;
-
 					sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
 					sr.start = token.get_emit().get_start() - coeurDeb;
 
