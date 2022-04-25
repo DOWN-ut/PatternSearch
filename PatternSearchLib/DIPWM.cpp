@@ -540,6 +540,29 @@ namespace PatternSearch
 		fichier.close();
 	}
 
+	void DIPWM::WritesFinalSequenceWordsFile(vector<SearchResult> results, string currentLocation, string sequenceFile)
+	{
+		string filename = this->id + to_string(this->usedSeuil) + sequenceFile;
+		
+		string path = currentLocation + "/" + filename;
+		
+		ofstream file(path);
+
+		if (!file.is_open()) {
+			cout << "failed to open " << filename << '\n';
+		}
+		else {
+			for (int i = 0; i < results.size(); i++)
+			{
+				SearchResult r = results.at(i);
+				file << r.start << "-" << r.end << " - " << r.str << endl;
+			}
+		}
+
+		file << EOF;
+
+	}
+
 	//Constructors
 	DIPWM::DIPWM(string filePath)
 	{
