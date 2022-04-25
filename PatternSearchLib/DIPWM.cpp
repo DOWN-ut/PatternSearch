@@ -573,7 +573,7 @@ namespace PatternSearch
 			for (int i = 0; i < results.size(); i++)
 			{
 				SearchResult r = results.at(i);
-				file << r.start << "-" << r.end << " - " << r.str << endl;
+				file << r.start << "-" << r.end << "-" << r.str << endl;
 			}
 		}
 
