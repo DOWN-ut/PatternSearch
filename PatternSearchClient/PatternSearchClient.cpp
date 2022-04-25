@@ -144,12 +144,12 @@ int main(int argc, char * args)
 
         vector<SearchResult> results = motif.Search(sequence,isCore);
 
-        cout << "\n>> " << results.size() << " resultats : \n" << endl;
+        cout << "\n>> " << results.size() << " resultats" << endl;
 
         for (int i = 0; i < results.size(); i++)
         {
             SearchResult r = results.at(i);
-            cout << r.start << "-" << r.end << " >> " << r.str << endl;
+            cout << "   |" << r.start << "-" << r.end << " >> " << r.str << endl;
         }
 
         motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
