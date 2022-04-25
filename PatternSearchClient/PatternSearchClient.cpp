@@ -3,9 +3,9 @@
 //
 #if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)  || defined(_WIN64) || defined(_WIN32)
     #include <Windows.h>
-    #include "../PatternSearchLib/DIPWM.h"
-    #include "../PatternSearchLib/LAT.h"
-    #include "../PatternSearchLib/LAM.h"
+    #include "DIPWM.h"
+    #include "LAT.h"
+    #include "LAM.h"
 #else
     #include "../PatternSearchLib/DIPWM.h"
     #include "../PatternSearchLib/LAT.h"
@@ -95,18 +95,18 @@ int main(int argc, char * args)
         char mode;   cin >> mode; cout << endl;
 
         if (mode == 'f') {
-            seuil = FOXP1.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false;
+            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory()); isCore = false;
         }
         else if (mode == 'c')
         {
-            seuil = FOXP1.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true; 
+            seuil = motif.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true;
         }
         else {
             cout << "  >>  Mauvaise entree" << endl; continue;
         }
 
 
-        if (FOXP1.WordCount() <= 0) {
+        if (motif.WordCount() <= 0) {
             cout << "  >> Aucun mot genere !" << endl; continue;
         }
         else{ break; }
@@ -117,7 +117,7 @@ int main(int argc, char * args)
     cout << "\nEcrire un fichier de mots ? <y> ou <n>" << endl;
     char write; cin >> write;
     if (write == 'y') {
-        FOXP1.WriteWordsFile(FOXP1.UsedSeuil(), GetCurrentDirectory(), isCore);
+        motif.WriteWordsFile(motif.UsedSeuil(), GetCurrentDirectory(), isCore);
     }
 
     char loopSeq = 'y';
