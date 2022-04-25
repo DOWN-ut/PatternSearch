@@ -15,28 +15,13 @@ int main(int argc, char **argv)
         cout << "    This program constructs a very compact FM-index" << endl;
         cout << "    which supports count, locate, and extract queries." << endl;
         cout << "    text_file      Original text file." << endl;
-        /*
-        cout << "    max_locations  Maximal number of location to report." << endl;
-        cout << "    post_context   Maximal length of the reported post-context." << endl;
-        cout << "    pre_context    Maximal length of the pre-context." << endl;
-        */
+
         return 1;
     }
     size_t max_locations = 5;
     size_t post_context = 10;
     size_t pre_context = 10;
-    /*  if (argc >= 3)
-      {
-          max_locations = atoi(argv[2]);
-      }
-      if (argc >= 4)
-      {
-          post_context = atoi(argv[3]);
-      }
-      if (argc >= 5)
-      {
-          pre_context = atoi(argv[4]);
-      }*/
+
     string index_suffix = ".fm9";
     string index_file = string(argv[1]) + index_suffix;
     csa_wt<wt_huff<rrr_vector<127>>, 512, 1024> fm_index; // creation de l'index methode huffman, forme rrr_vector.
@@ -73,25 +58,24 @@ int main(int argc, char **argv)
 
     char inter_seuil[100];// récupération score min
     source.getline(inter_seuil, 10000, '\n'); 
-    int seuil = atoi(inter_seuil);
+    float seuil = atof(inter_seuil);
 
     int test = 0;
     for (int num_mot = 0; num_mot < nb; num_mot++)
     {
         string query;
         getline(source, query, '>');
-        source.ignore(1000, '\n');
-        // boucle recherche
-        // mot sous forme char[]
-        // source.getline(inter_mot,1000,'>');
+        
 
         size_t m = query.size();
         size_t occs = sdsl::count(fm_index, query.begin(), query.end());
         if (occs > 0)
         {
+            char inter_score[100];
+            source.getline(inter_score,1000,'\n');
+            float score = atof(inter_score);
             cout << "# of occurrences: " << occs << endl;
-            if (occs > 0)
-            {
+            
                 cout << "Location and context of first occurrences: " << endl;
                 auto locations = locate(fm_index, query.begin(), query.begin() + m);
                 sort(locations.begin(), locations.end());
@@ -120,10 +104,11 @@ int main(int argc, char **argv)
                     string context = s.substr(m);
                     cout << context.substr(0, context.find_first_of('\n')) << endl;
                 }
-            }
+            
 
             cout << endl;
         }
+        else{source.ignore(1000, '\n');}
         test++;
     }
     cout << test << "\n";
