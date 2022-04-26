@@ -3,10 +3,16 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <thread>
+#include <mutex>
+#include <chrono>
 #include "LAM.h"
 #include "LAT.h"
 #include "aho_corasick.hpp"
+#if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)  || defined(_WIN64) || defined(_WIN32)
+#else
 #include <cmath>
+#endif
 
 using namespace std;
 using namespace aho_corasick;
@@ -55,6 +61,7 @@ namespace PatternSearch
 	}
 
 	double DIPWM::UsedSeuil() { return usedSeuil; }
+	int DIPWM::WordCount() { return wordCount; }
 
 	//Prints
 	void DIPWM::DisplayTable() 
@@ -182,39 +189,47 @@ namespace PatternSearch
 	}
 
 	//Enumeration
-	void DIPWM::FullWordRecursion(vector<char>* vectW, vector<float>* vectS,char* buffer,double seuil,int pos,double score)
+	void DIPWM::FullWordRecursion(DIPWM* dipwm, vector<char>* vectW, vector<float>* vectS, char* buffer, double seuil, int pos, double score, bool isMain)
 	{
 		//Si on est arrivé à la dernière lettre,
-		if (pos >= wordLength)
+		if (pos >= dipwm->wordLength)
 		{
+			dipwm->enumerationMutex.lock();
 			//On ajoute ce mot à la liste, en copiant le buffer dans le vect
-			for (int i = 0; i < wordLength; i++)
+			for (int i = 0; i < dipwm->wordLength; i++)
 			{
 				vectW->push_back(buffer[i]);
 			}
 			vectS->push_back(score);
+			dipwm->enumerationMutex.unlock();
 			return;
 		}
 		else
 		{
 			for (char c = 0; c < 4; c++)
 			{
-				double nscore = score + ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
+				double nscore = score + dipwm->ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
 
-				if ( (pos == wordLength - 1) && nscore < seuil)			//Si on est en train de placer la dernière lettre, on vérifie que le score final soit suffisant
+				if ((pos == dipwm->wordLength - 1) && nscore < seuil)			//Si on est en train de placer la dernière lettre, on vérifie que le score final soit suffisant
 				{
 					continue;
 				}
-				else if (nscore + lam->MaxLeftOf(c, pos) < seuil)	//Sinon, on vérigie que le nouveau score maximal atteignable soit suffisant
+				else if (nscore + dipwm->lam->MaxLeftOf(c, pos) < seuil)	//Sinon, on vérigie que le nouveau score maximal atteignable soit suffisant
 				{
 					continue;
 				}
 				else										//Si les conditions sont remplies, on continue
 				{
 					buffer[pos] = c;
-					FullWordRecursion(vectW, vectS, buffer, seuil, pos + 1, nscore);
+					FullWordRecursion(dipwm, vectW, vectS, buffer, seuil, pos + 1, nscore,false);
 				}
 			}
+		}
+
+		if (isMain) {
+			dipwm->enumerationMutex.lock();
+			dipwm->currentThreadCount--;
+			dipwm->enumerationMutex.unlock();
 		}
 	}
 
@@ -235,7 +250,7 @@ namespace PatternSearch
 		{
 			for (char c = 0; c < 4; c++)
 			{
-				double nscore = score + ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
+				double nscore = score + ScoreOf(buffer[pos - 1 - coeurDeb], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
 
 				if (nscore + lam->MaxLeftOf(c, pos) < seuil)	//On vérifie que le nouveau score maximal atteignable soit suffisant
 				{
@@ -266,25 +281,55 @@ namespace PatternSearch
 		}
 	}
 
-	bool DIPWM::EnumerateFullWords(double seuil, string currentLocation)
+	bool DIPWM::EnumerateFullWords(double seuil, string currentLocation, bool displayProgression)
 	{
-		double seuilVal =  ((maxValue - minValue) * seuil) + minValue;
+		double seuilVal = ((maxValue - minValue) * seuil) + minValue;
 
-		if (SearchFile(seuilVal, currentLocation,false)) { return false; }
+		if (SearchFile(seuilVal, currentLocation, false)) { return false; }
 
-		cout << "Calculating words with a threshold of " << seuilVal << endl;
+		cout << "Launching threads to calculate words with a threshold of " << seuilVal << endl;
 
 		vector<char> vectW = vector<char>();
 		vector<float> vectS = vector<float>();
+
+		thread threads[4];
 
 		for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
 		{
 			char* buffer = new char[wordLength];
 			buffer[0] = c;					//On initialise la première lettre du buffer
-			FullWordRecursion(&vectW, &vectS, buffer, seuilVal, 1, 0);
+
+			currentThreadCount++;
+			threads[c] = thread(FullWordRecursion, this, &vectW, &vectS, buffer, seuilVal, 1, 0, true);
 		}
 
-		FillEnumerationArray(&vectW, &vectS,wordLength);
+		cout << "  ||>> Waiting for all threads" << endl;
+
+		if (displayProgression) {
+			cout << "  || count : "; int lastSize = 0;
+
+			while (currentThreadCount > 0)
+			{
+				for (int i = 0; i < lastSize; i++) { cout << '\b'; }
+
+				string str = to_string(vectW.size() / wordLength);
+				lastSize = str.size();
+
+				for (int i = 0; i < lastSize; i++) { cout << str[i]; }
+
+				this_thread::sleep_for(chrono::milliseconds(50));
+			}
+			cout << " END " << endl;
+		}
+
+		for (int i = 0; i < 4; i++)
+		{
+			threads[i].join();
+		}
+
+		cout << "  ||>> Filling arrays " << endl;
+
+		FillEnumerationArray(&vectW, &vectS, wordLength);
 
 		usedSeuil = seuilVal;
 
@@ -341,16 +386,26 @@ namespace PatternSearch
 			{
 				SearchResult sr;
 				
-				sr.end = token.get_emit().get_end() + (wordLength - coeurFin);
-				sr.start = token.get_emit().get_start() - coeurDeb;
+				if (!isCore){
+					sr.end = token.get_emit().get_end();
+					sr.start = token.get_emit().get_start();
 
-				if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
+					sr.str = token.get_fragment();
 
-				sr.str = sequence.substr(sr.start, sr.end);
-
-				if(WordScore(sr.str.c_str()) >= usedSeuil)
-				{
 					vect.push_back(sr);
+				}
+				else {
+					sr.end = token.get_emit().get_end() + (wordLength - coeurFin) - 1;
+					sr.start = token.get_emit().get_start() - coeurDeb;
+
+					if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
+
+					sr.str = sequence.substr(sr.start, sr.end);
+
+					if (WordScore(sr.str.c_str()) >= usedSeuil)
+					{
+						vect.push_back(sr);
+					}
 				}
 			}
 		}
@@ -445,6 +500,7 @@ namespace PatternSearch
 	}
 
 	bool DIPWM::ParsingFileData(string header, string data, bool isCore)
+
 	{
 		cout << "    |>>  Header : " << header << endl;
 
@@ -463,13 +519,15 @@ namespace PatternSearch
 
 		cout << "    |>>  ID : " << headerDat[0] << "  |  Wordcount : " << headerDat[2] << "  |  WordLength : " << headerDat[1] << "  |  Threshold : " << headerDat[3] << endl;
 		
-		if (!isCore) { wordLength = atoi(headerDat[1].c_str()); }
+		//if (!isCore) { wordLength = atoi(headerDat[1].c_str()); } inutile
 		int wl = isCore ? coreLenght : wordLength;
 
 		wordCount = atoi(headerDat[2].c_str());
 		usedSeuil = atof(headerDat[3].c_str());
 
 		cout << "    |>>  Wordcount : " << wordCount << "  |  WordLength : " << wl << "  |  Threshold : " << usedSeuil << endl;
+
+		if (wordCount <= 0) { cout << "    |!! Error : wordcount = 0 " << endl; return false; }
 
 		int l = wordCount * wl;
 
@@ -539,6 +597,29 @@ namespace PatternSearch
 
 		cout << "File successfully created" << endl;
 		fichier.close();
+	}
+
+	void DIPWM::WritesFinalSequenceWordsFile(vector<SearchResult> results, string currentLocation, string sequenceFile)
+	{
+		string filename = this->id + to_string(this->usedSeuil) + sequenceFile;
+		
+		string path = currentLocation + "/" + filename;
+		
+		ofstream file(path);
+
+		if (!file.is_open()) {
+			cout << "failed to open " << filename << '\n';
+		}
+		else {
+			for (int i = 0; i < results.size(); i++)
+			{
+				SearchResult r = results.at(i);
+				file << r.start << "-" << r.end << "-" << r.str <<"-"<<WordScore(r.str.c_str())<< endl;
+			}
+		}
+
+		file << EOF;
+
 	}
 
 	//Constructors
