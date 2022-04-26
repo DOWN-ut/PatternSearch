@@ -10,14 +10,15 @@ Vous pouvez tester différents fichiers DIPWM et différentes séquences.
 
 Pour compiler vous même le projet :
 
-# Windows :
-
+Windows :
+-----------
   - Vous devez cloner ce répertoire Git directement avec Visual Studio
   - Il peut être nécessaire de lier les deux sous-projets (PatternSearchClient et PatternSearchLib), pour que le client (qui include la librairie) puis être compilé correctement
   - L'éxécutable se trouve dans le répertoire "Debug" ou bien "x64/Debug"
   - Vous pouvez aussi utiliser le MakeFile (mais vous devez avoir "cmake" ou un équivalent installé sur votre machine.
 
-# Linux :
+Linux :
+-----------
   Avant toute chose, il faut installer la librairie SDSL si vous souhaitez l'utiliser 
   (Cette librairie n'est fonctionnelle que sous linux)
 
@@ -36,8 +37,6 @@ La librairie est désormais installée.
 ./uninstall.sh
 ```
 
-
-# Utilisation :
 
   - Ouvrez un terminal dans le répertoire racine "PatternSearch"
   - Entrez la commande "make"
