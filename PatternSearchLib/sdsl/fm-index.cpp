@@ -1,42 +1,34 @@
 #include <sdsl/suffix_arrays.hpp>
-#include <string>
-#include <iostream>
-#include <algorithm>
-#include <iomanip>
+#include "fm_index.h"
+// fileSource = fichier a parcourir 
+// fileList = fichier liste
+// fileOut = nom du fichier en sortie 
 
 using namespace sdsl;
-using namespace std;
-
-int main(int argc, char **argv)
+static void SDSL::fm_index(string fileSource, string fileList, string fileOut)
 {
-    if (argc < 3)
-    {
-        cout << "Usage " << argv[0] << " [fichier a parcourir] [fichier liste] [nom du fichier en sortie] " << endl;
-        return 1;
-    }
     size_t max_locations = 5;
     size_t post_context = 10;
     size_t pre_context = 10;
 
-    string fileName = argv[3];  
+    string fileName = fileOut;  
     
     ofstream fichier(fileName);
 
 
     string index_suffix = ".fm9";
-    string index_file = string(argv[1]) + index_suffix;
+    string index_file = string(fileSource) + index_suffix;
     csa_wt<wt_huff<rrr_vector<127>>, 512, 1024> fm_index; // creation de l'index methode huffman, forme rrr_vector.
 
     if (!load_from_file(fm_index, index_file))
     {
-        ifstream in(argv[1]);
+        ifstream in(fileSource);
         if (!in)
         {
-            cout << "ERROR: File " << argv[1] << " does not exist. Exit." << endl;
-            return 1;
+            cout << "ERROR: File " << fileSource << " does not exist. Exit." << endl;
         }
         cout << "No index " << index_file << " located. Building index now." << endl;
-        construct(fm_index, argv[1], 1);     // generate index
+        construct(fm_index, fileSource, 1);     // generate index
         store_to_file(fm_index, index_file); // save it
     }
     cout << "Index construction complete, index requires " << size_in_mega_bytes(fm_index) << " MiB." << endl;
@@ -45,7 +37,7 @@ int main(int argc, char **argv)
     string prompt = "\e[0;32m>\e[0m ";
     cout << prompt;
 
-    ifstream source(argv[2]);
+    ifstream source(fileList);
 
     string nom_du_fichier;
     getline(source, nom_du_fichier, ' '); // recup du nom du fichier
@@ -64,7 +56,6 @@ int main(int argc, char **argv)
     source.getline(inter_seuil, 10000, '\n'); 
     float seuil = atof(inter_seuil);
 
-    int test = 0;
     for (int num_mot = 0; num_mot < nb; num_mot++)
     {
         string query;
@@ -116,9 +107,8 @@ int main(int argc, char **argv)
             cout << endl;
         }
         else{source.ignore(1000, '\n');}
-        test++;
+
     }
-    cout << test << "\n";
 
     fichier.close();
-}
+};

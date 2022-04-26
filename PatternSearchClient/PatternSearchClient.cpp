@@ -10,6 +10,7 @@
     #include "../PatternSearchLib/DIPWM.h"
     #include "../PatternSearchLib/LAT.h"
     #include "../PatternSearchLib/LAM.h"
+    #include "../PatternSearchLib/sdsl/fm_index.h"
     #include <libgen.h>         // dirname   
     #include <unistd.h>         // readlink
     #include <linux/limits.h>   // PATH_MAX
@@ -21,6 +22,7 @@
 
 using namespace std;
 using namespace PatternSearch;
+
 
 std::string GetCurrentDirectory()
 {
@@ -134,27 +136,45 @@ int main(int argc, char * args)
                 cout << "  ||>> Fichier introuvable " << endl;
                 return 0;
             }
+            cout<<"Selectionner une méthode a utiliser :"<<endl;
+            cout<<"1 pour Aho_corasik"<<endl;
+            cout<<"2 pour SDSL"<<endl;
+            int methode;
+            cin >> methode;
 
-            getline(fichier, sequence);
+            
+            if(methode == 1){
 
-            cout << "Sequence :  " << sequence << endl;
+                getline(fichier, sequence);
 
-            vector<SearchResult> results = motif.Search(sequence, isCore);
+                cout << "Sequence :  " << sequence << endl;
 
-            cout << "\n>> " << results.size() << " resultats" << endl;
+                vector<SearchResult> results = motif.Search(sequence, isCore);
 
-            for (int i = 0; i < results.size(); i++)
-            {
-                SearchResult r = results.at(i);
-                cout << "   |" << r.start << "-" << r.end << " >> " << r.str << endl;
+                cout << "\n>> " << results.size() << " resultats" << endl;
+
+                for (int i = 0; i < results.size(); i++)
+                {
+                    SearchResult r = results.at(i);
+                    cout << "   |" << r.start << "-" << r.end << " >> " << r.str << endl;
+                }
+
+                cout << "\nEcrire un fichier de resultats ? <y> ou <n>" << endl;
+                write; cin >> write;
+                if (write == 'y') {
+                    motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
+                }
+
+            }else if(methode == 2 ){
+                string fileOut;
+                cout<<"Saisir un nom de fichier en sortie"<<endl;
+                cin>>fileOut;
+
+                SDSL::fm_index(sequenceFile, sequence,fileOut);
             }
 
-            cout << "\nEcrire un fichier de resultats ? <y> ou <n>" << endl;
-            write; cin >> write;
-            if (write == 'y') {
-                motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
-            }
 
+            
             cout << "\nEntrez <y> pour analyser une nouvelle sequence" << endl;
 
             cin >> loopSeq;
@@ -162,7 +182,13 @@ int main(int argc, char * args)
 
         cout << "\nEntrez <y> pour recommencer avec un nouveau seuil" << endl;
         cin >> loop;
+       
+    
     }
+
+
+
+    
 
     cout << "\n\nEND" << endl;
 }
