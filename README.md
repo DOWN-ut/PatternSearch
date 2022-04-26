@@ -14,6 +14,7 @@ Windows :
   - Vous devez cloner ce répertoire Git directement avec Visual Studio
   - Il peut être nécessaire de lier les deux sous-projets (PatternSearchClient et PatternSearchLib), pour que le client (qui include la librairie) puis être compilé correctement
   - L'éxécutable se trouve dans le répertoire "Debug" ou bien "x64/Debug"
+  - Vous pouvez aussi utiliser le MakeFile (mais vous devez avoir "cmake" ou un équivalent installé sur votre machine.
 
 Linux :
   - Ouvrez un terminal dans le répertoire racine "PatternSearch"
