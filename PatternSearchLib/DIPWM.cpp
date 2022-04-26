@@ -250,7 +250,7 @@ namespace PatternSearch
 		{
 			for (char c = 0; c < 4; c++)
 			{
-				double nscore = score + ScoreOf(buffer[pos - 1], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
+				double nscore = score + ScoreOf(buffer[pos - 1 - coeurDeb], c, pos - 1);	//Défine le nouveau score pour cet ajout de lettre
 
 				if (nscore + lam->MaxLeftOf(c, pos) < seuil)	//On vérifie que le nouveau score maximal atteignable soit suffisant
 				{
@@ -312,7 +312,7 @@ namespace PatternSearch
 			{
 				for (int i = 0; i < lastSize; i++) { cout << '\b'; }
 
-				string str = to_string(vectW.size());
+				string str = to_string(vectW.size() / wordLength);
 				lastSize = str.size();
 
 				for (int i = 0; i < lastSize; i++) { cout << str[i]; }

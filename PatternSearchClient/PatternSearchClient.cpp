@@ -83,79 +83,85 @@ int main(int argc, char * args)
     cout << "Valeur maximum :" << motif.Lam()->GetMaxValue() << endl;
     cout << "Valeur minimum :" << motif.Lam()->GetMinValue() << endl;
 
-    bool isCore;
-    while (true)
+    bool isCore; char loop = 'y';
+    while (loop)
     {
-    cout << "\n\nEntrez un seuil (% du maximum):  ";
+        cout << "\n\nEntrez un seuil (% du maximum):  ";
 
-    double seuil; cin >> seuil;cout << endl;
+        double seuil; cin >> seuil; cout << endl;
 
         cout << "Entrez <f> pour enumerer les mots complets, <c> pour les mots du coeur" << endl;
 
         char mode;   cin >> mode; cout << endl;
 
         if (mode == 'f') {
-            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory(),true); isCore = false;
+            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory(), true); isCore = false;
         }
         else if (mode == 'c')
         {
             seuil = motif.EnumerateCoreWords(seuil, GetCurrentDirectory()); isCore = true;
         }
         else {
-            cout << "  >>  Mauvaise entree" << endl; continue;
+            cout << "  >> Mauvaise entree" << endl; continue;
         }
-
 
         if (motif.WordCount() <= 0) {
             cout << "  >> Aucun mot genere !" << endl; continue;
         }
-        else{ break; }
-    }
 
-    motif.DisplayWords(10,isCore);
+        motif.DisplayWords(10, isCore);
 
-    cout << "\nEcrire un fichier de mots ? <y> ou <n>" << endl;
-    char write; cin >> write;
-    if (write == 'y') {
-        motif.WriteWordsFile(motif.UsedSeuil(), GetCurrentDirectory(), isCore);
-    }
-
-    char loopSeq = 'y';
-    while (loopSeq == 'y') 
-    {
-        cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
-        string sequenceFile;
-        cin >> sequenceFile;
-        string sequenceName = sequenceFile;
-        sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
-        cout << "Analyse de la sequence dans : " << sequenceFile << endl;
-
-        string sequence;
-        ifstream fichier(sequenceFile);
-        if (!fichier.good())
-        {
-            cout << "  ||>> Fichier introuvable " << endl;
-            return 0;
+        cout << "\nEcrire un fichier de mots ? <y> ou <n>" << endl;
+        char write; cin >> write;
+        if (write == 'y') {
+            motif.WriteWordsFile(motif.UsedSeuil(), GetCurrentDirectory(), isCore);
         }
 
-        getline(fichier, sequence);
-
-        cout << "Sequence :  " << sequence << endl;
-
-        vector<SearchResult> results = motif.Search(sequence,isCore);
-
-        cout << "\n>> " << results.size() << " resultats" << endl;
-
-        for (int i = 0; i < results.size(); i++)
+        char loopSeq = 'y';
+        while (loopSeq == 'y')
         {
-            SearchResult r = results.at(i);
-            cout << "   |" << r.start << "-" << r.end << " >> " << r.str << endl;
+            cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
+            string sequenceFile;
+            cin >> sequenceFile;
+            string sequenceName = sequenceFile;
+            sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
+            cout << "Analyse de la sequence dans : " << sequenceFile << endl;
+
+            string sequence;
+            ifstream fichier(sequenceFile);
+            if (!fichier.good())
+            {
+                cout << "  ||>> Fichier introuvable " << endl;
+                return 0;
+            }
+
+            getline(fichier, sequence);
+
+            cout << "Sequence :  " << sequence << endl;
+
+            vector<SearchResult> results = motif.Search(sequence, isCore);
+
+            cout << "\n>> " << results.size() << " resultats" << endl;
+
+            for (int i = 0; i < results.size(); i++)
+            {
+                SearchResult r = results.at(i);
+                cout << "   |" << r.start << "-" << r.end << " >> " << r.str << endl;
+            }
+
+            cout << "\nEcrire un fichier de resultats ? <y> ou <n>" << endl;
+            write; cin >> write;
+            if (write == 'y') {
+                motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
+            }
+
+            cout << "\nEntrez <y> pour analyser une nouvelle sequence" << endl;
+
+            cin >> loopSeq;
         }
 
-        motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
-
-        cout << "\nEntrez (y) pour analyser une nouvelle sequence" << endl;
-        cin >> loopSeq;
+        cout << "\nEntrez <y> pour recommencer avec un nouveau seuil" << endl;
+        cin >> loop;
     }
 
     cout << "\n\nEND" << endl;
