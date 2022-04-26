@@ -11,6 +11,6 @@ Windows :
 
 Linux :
   >> Ouvrez un terminal dans le répertoire racine "PatternSearch"
-  >> Entrez la commande "make"
-  >> Entrez dans le répertoire "bin"
-  >> L'éxecutable est le fichier "client"
+  Entrez la commande "make"
+  Entrez dans le répertoire "bin"
+  L'éxecutable est le fichier "client"
