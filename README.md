@@ -17,7 +17,25 @@ Windows :
   - Vous pouvez aussi utiliser le MakeFile (mais vous devez avoir "cmake" ou un équivalent installé sur votre machine.
 
 Linux :
+  Avant toute chose, il faut installer la librairie SDSL si vous souhaitez l'utiliser 
+  - Ouvrez un terminal dans le répertoire "/PatternSearchLib/sdsl-source"
+  - Lancer l'installation de la SDSL :
+
+```sh
+./install.sh /usr/local/
+```
+
+La librairie est désormais installée. 
+
+
   - Ouvrez un terminal dans le répertoire racine "PatternSearch"
   - Entrez la commande "make"
   - Entrez dans le répertoire "bin"
   - L'éxecutable est le fichier "client"
+
+  
+  Vous pouvez desinstaller la librairie SDSL de la façon suivant :
+
+  ```sh
+./uninstall.sh
+```
