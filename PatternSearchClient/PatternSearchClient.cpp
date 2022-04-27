@@ -252,10 +252,10 @@ int main(int argc, char *args)
 
                 cout << "    ||>> " << results.size() << " resultats" << endl;
 
-                for (int i = 0; i < results.size(); i++)
+                for (int i = 0; i < min(results.size(),20); i++)
                 {
                     SearchResult r = results.at(i);
-                    cout << "      > " << r.start << "-" << r.end << " >> " << r.str << endl;
+                    cout << "      " << i << "> " << r.start << " - " << r.end << " >> " << r.str << endl;
                 }
 
                 cout << "\nEcrire un fichier de resultats ? <y> ou <n>" << endl;
