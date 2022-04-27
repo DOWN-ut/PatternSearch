@@ -366,7 +366,9 @@ namespace PatternSearch
 	//Search
 	vector<SearchResult> DIPWM::Search(string sequence, bool isCore)
 	{
-		trie searcher; int wl = isCore ? coreLenght : wordLength;
+		trie searcher; //searcher.case_insensitive();
+		
+		int wl = isCore ? coreLenght : wordLength;
 		for (int i = 0; i < wordCount; i++)
 		{
 			string word;
@@ -376,36 +378,35 @@ namespace PatternSearch
 			}
 			searcher.insert(word);
 		}
-
-		auto tokens = searcher.tokenise(sequence);
+		
+		vector<emit<char>> tokens = searcher.parse_text(sequence);
 		vector<SearchResult> vect;
 		
-		for (const auto& token : tokens)
+		for (int t = 0; t < tokens.size();t++)
 		{
-			if (token.is_match())
-			{
-				SearchResult sr;
-				
-				if (!isCore){
-					sr.end = token.get_emit().get_end();
-					sr.start = token.get_emit().get_start();
+			emit<char> token = tokens.at(t);
 
-					sr.str = token.get_fragment();
+			SearchResult sr;
 
+			if (!isCore) {
+				sr.end = token.get_start();
+				sr.start = token.get_end();
+
+				sr.str = token.get_keyword();
+
+				vect.push_back(sr);
+			}
+			else {
+				sr.end = token.get_end() + (wordLength - coeurFin) - 1;
+				sr.start = token.get_start() - coeurDeb;
+
+				if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
+
+				sr.str = sequence.substr(sr.start, sr.end);
+
+				if (WordScore(sr.str.c_str()) >= usedSeuil)
+				{
 					vect.push_back(sr);
-				}
-				else {
-					sr.end = token.get_emit().get_end() + (wordLength - coeurFin) - 1;
-					sr.start = token.get_emit().get_start() - coeurDeb;
-
-					if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
-
-					sr.str = sequence.substr(sr.start, sr.end);
-
-					if (WordScore(sr.str.c_str()) >= usedSeuil)
-					{
-						vect.push_back(sr);
-					}
 				}
 			}
 		}
@@ -556,9 +557,9 @@ namespace PatternSearch
 				i++;
 			}
 			scores[sid] = atof(buffer.c_str());
-			i++; sid++;
-
-			if (i >= l) { break; }
+			sid++;
+		
+			if (wid >= l) { break; }
 		}
 
 		cout << "    |>>  Data loaded successfully : ending parsing" << endl;

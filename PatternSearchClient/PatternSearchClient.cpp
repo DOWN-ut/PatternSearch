@@ -120,33 +120,85 @@ int main(int argc, char * args)
         char loopSeq = 'y';
         while (loopSeq == 'y')
         {
-            cout << "\n\nEntrez le fichier contenant la sequence a analyser : " << endl;
+            cout << "\n\nEntrez le fichier contenant la sequence a analyser : ";
             string sequenceFile;
             cin >> sequenceFile;
             string sequenceName = sequenceFile;
             sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
-            cout << "Analyse de la sequence dans : " << sequenceFile << endl;
 
-            string sequence;
+        LINECHOICE:
+
+            int debLine, finLine;
+            cout << "  ||>> Entrez la premiere ligne a analyser : ";
+            cin >> debLine;
+            cout << "  ||>> Entrez la derniere ligne a analyser : ";
+            cin >> finLine; cout << endl;
+
+            cout << "Lecture des lignes [" << debLine << "-" << finLine << "] de la sequence dans : " << sequenceFile << endl;
+
             ifstream fichier(sequenceFile);
             if (!fichier.good())
             {
-                cout << "  ||>> Fichier introuvable " << endl;
-                return 0;
+                cout << "  ||>> Fichier introuvable " << endl; cin.clear();
+                continue;
             }
 
-            getline(fichier, sequence);
+            vector<string> sequenceLines; int sequenceSize = 0; string header;  string line; int lineId = 0;
+            while (getline(fichier, line) && lineId < finLine)
+            {
+                if (lineId == 0) { header = line; }
+                else if (lineId >= debLine) {
+                    sequenceLines.push_back(line);
+                    sequenceSize += line.size();
+                }
+                lineId++;
+            }
 
-            cout << "Sequence :  " << sequence << endl;
+            cout << "  ||>> header : " << header << endl;
+            cout << "  ||>> " << sequenceLines.size() << " lignes a analyser" << endl;
+            if (sequenceLines.size() >= 4) {
+                for (int i = 0; i < 4; i++) {
+                    int id = min(sequenceLines.size() - 1, (sequenceLines.size() / 3) * i);
+                    if (i == 2) { cout << "    ||>> ... ... ..." << endl; }
+                    else { cout << "    ||>> Ligne " << id + debLine << " : " << sequenceLines.at(id).substr(0, 30) << " ... " << sequenceLines.at(id).size() << endl; }
+                }
+            }
+            else {
+                cout << "    ||>> Ligne 0 : " << sequenceLines.at(0).substr(0, 30) << " ... " << sequenceLines.at(0).size() << endl;
+            }
 
-            vector<SearchResult> results = motif.Search(sequence, isCore);
+            char c;
+            cout << "  ||>> Entrez <y> pour continuer, <n> pour changer de lignes" << endl;
+            cin >> c;
 
-            cout << "\n>> " << results.size() << " resultats" << endl;
+            if (c != 'y') { goto LINECHOICE; }
+
+            cout << "  ||>> Generation d'une chaine contenant les lignes [" << debLine << "-" << finLine << "]" << endl;
+
+            char* sequenceArr = new char[sequenceSize]; int sid = 0;
+            for (int i = 0; i < sequenceLines.size(); i++)
+            {
+                for (int o = 0; o < sequenceLines.at(i).size(); o++)
+                {
+                    sequenceArr[sid] = sequenceLines.at(i)[o];
+                    sid++;
+                }
+            }
+
+            string sequence = string(sequenceArr);
+
+            cout << "    ||>>  Taille de la chaine : " << sequence.size() << " > " << sequence.substr(0,50) << " ... " << endl;
+
+            cout << "  ||>> Analyse de la chaine..." << endl;//n°" << i << " ..." << endl;
+
+            vector<SearchResult> results = motif.Search(sequence, isCore);   //results.insert(results.end(), r.begin(), r.end());
+            
+            cout << "    ||>> " << results.size() << " resultats" << endl;
 
             for (int i = 0; i < results.size(); i++)
             {
                 SearchResult r = results.at(i);
-                cout << "   |" << r.start << "-" << r.end << " >> " << r.str << endl;
+                cout << "      > " << r.start << "-" << r.end << " >> " << r.str << endl;
             }
 
             cout << "\nEcrire un fichier de resultats ? <y> ou <n>" << endl;
