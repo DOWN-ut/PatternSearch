@@ -239,7 +239,7 @@ int main(int argc, char *args)
 
             cout << "    ||>>  Taille de la chaine : " << sequence.size() << " > " << sequence.substr(0, 50) << " ... " << endl;
 
-        LABELMETHODE:
+        METHODE:
 
             cout << "  ||>> Selectionner une méthode a utiliser : <a> pour Aho_corasik, <s> pour SDSL :";
             char methode; cin >> methode; cout << endl;
@@ -276,6 +276,7 @@ int main(int argc, char *args)
                 cout << "SDSL n'est disponible que sur Linux" << endl;
                 goto LABELMETHODE;
 #else
+              
                 string fileOut;
                 cout << "Saisir un nom de fichier en sortie" << endl;
                 cin >> fileOut;
@@ -285,7 +286,9 @@ int main(int argc, char *args)
             }
             else
             {
-                goto LABELMETHODE;
+
+                goto METHODE;
+
             }
 
             cout << "\nEntrez <y> pour analyser une nouvelle sequence" << endl;
