@@ -1,15 +1,28 @@
-prog : PatternSearchClient.o aho_corasick.o LAT.o LAM.o DIPWM.o SDSL.o
-	g++ -Wall  -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib PatternSearchClient.o  LAT.o LAM.o DIPWM.o SDSL.o -lpthread -lsdsl -ldivsufsort -ldivsufsort64 -o prog
-SDSL.o : PatternSearchLib/SDSL.cpp
-	g++ -Wall -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib PatternSearchLib/SDSL.cpp -c -lsdsl -ldivsufsort -ldivsufsort64
-DIPWM.o : PatternSearchLib/DIPWM.cpp
-	g++ -c -Wall PatternSearchLib/DIPWM.cpp
-LAM.o : PatternSearchLib/LAM.cpp	
-	g++ -c -Wall PatternSearchLib/LAM.cpp
-LAT.o : PatternSearchLib/LAT.cpp
-	g++ -c -Wall PatternSearchLib/LAT.cpp
-aho_corasick.o : PatternSearchLib/aho_corasick.hpp
-	g++ -c -Wall PatternSearchLib/aho_corasick.hpp
-PatternSearchClient.o : PatternSearchClient/PatternSearchClient.cpp	
-	g++ -c -Wall PatternSearchClient/PatternSearchClient.cpp
+BIN=bin/client
 
+# liste des fichiers sources 
+DIPWN=PatternSearchLib/DIPWM.cpp
+LAM=PatternSearchLib/LAM.cpp
+LAT=PatternSearchLib/LAT.cpp
+AHO=PatternSearchLib/aho_corasick.hpp
+CLIENT=PatternSearchClient/PatternSearchClient.cpp
+SDSL=PatternSearchLib/SDSL.cpp
+
+default: $(BIN)
+
+########################################
+#~ regles pour l'executable
+########################################
+
+obj/%.o: %.cpp
+	$(DIR_GUARD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+SDSL.o: PatternSearchLib/SDSL.cpp
+	g++ -Wall -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib PatternSearchLib/SDSL.cpp -c -lsdsl -ldivsufsort -ldivsufsort64
+
+bin/client: $(CLIENT:%.c=obj/%.o) $(DIPWN:%.c=obj/%.o) $(LAM:%.c=obj/%.o) $(LAT:%.c=obj/%.o) $(AHO:%.c=obj/%.o) SDSL.o
+	g++ -Wall -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib  -o $@ $+ -lpthread -lsdsl -ldivsufsort -ldivsufsort64
+	
+clean:
+	rm -f $(BIN) obj/*.o *~
