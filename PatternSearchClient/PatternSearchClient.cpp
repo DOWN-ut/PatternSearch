@@ -58,6 +58,8 @@ int main(int argc, char *args)
 {
     cout << "\n\nStart\n\n";
 
+    START:
+
     cout << "\n\n Entrez le fichier contenant la DIPWM a analyser : " << endl;
     string DIPWMFILE;
     cin >> DIPWMFILE;
@@ -67,7 +69,7 @@ int main(int argc, char *args)
     if (!fichierD.good())
     {
         cout << "  ||>> Fichier introuvable " << endl;
-        return 0;
+        goto START;
     }
 
     // string file = "D:/Documents/Etudes/FAC/L3/TER/PatternSearch/Debug/motif_HUMAN.H11DI.0.A.dpwm";
@@ -237,7 +239,7 @@ int main(int argc, char *args)
 
             cout << "    ||>>  Taille de la chaine : " << sequence.size() << " > " << sequence.substr(0, 50) << " ... " << endl;
 
-        labelmethode:
+        LABELMETHODE:
 
             cout << "Selectionner une méthode a utiliser :" << endl;
             cout << "a pour Aho_corasik" << endl;
@@ -247,7 +249,6 @@ int main(int argc, char *args)
 
             if (methode == 'a')
             {
-
                 cout << "  ||>> Analyse de la chaine avec aho-corasick" << endl;
 
                 vector<SearchResult> results = motif.Search(sequence, isCore); // results.insert(results.end(), r.begin(), r.end());
@@ -270,15 +271,20 @@ int main(int argc, char *args)
             }
             else if (methode == 's')
             {
+#if IS_WINDOWS
+                cout << "SDSL n'est disponible que sur Linux" << endl;
+                goto LABELMETHODE;
+#else
                 string fileOut;
                 cout << "Saisir un nom de fichier en sortie" << endl;
                 cin >> fileOut;
                 string fileList = motif.FileName(motif.UsedSeuil(), isCore);
                 SDSL::fm_index(sequenceName, fileList, fileOut);
+#endif
             }
             else
             {
-                goto labelmethode;
+                goto LABELMETHODE;
             }
 
             cout << "\nEntrez <y> pour analyser une nouvelle sequence" << endl;
