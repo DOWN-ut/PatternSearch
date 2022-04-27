@@ -176,11 +176,7 @@ int main(int argc, char *args)
                 continue;
             }
 
-            vector<string> sequenceLines;
-            int sequenceSize = 0;
-            string header;
-            string line;
-            int lineId = 0;
+            vector<string> sequenceLines; int sequenceSize = 0; int sequenceDeb = 0; string header;  string line;  int lineId = 0;
             while (getline(fichier, line) && lineId < finLine)
             {
                 if (lineId == 0)
@@ -191,6 +187,9 @@ int main(int argc, char *args)
                 {
                     sequenceLines.push_back(line);
                     sequenceSize += line.size();
+                }
+                else {
+                    sequenceDeb++;
                 }
                 lineId++;
             }
@@ -251,7 +250,7 @@ int main(int argc, char *args)
             {
                 cout << "  ||>> Analyse de la chaine avec aho-corasick" << endl;
 
-                vector<SearchResult> results = motif.Search(sequence, isCore); // results.insert(results.end(), r.begin(), r.end());
+                vector<SearchResult> results = motif.Search(sequence, sequenceDeb, isCore); // results.insert(results.end(), r.begin(), r.end());
 
                 cout << "    ||>> " << results.size() << " resultats" << endl;
 

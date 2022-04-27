@@ -373,7 +373,7 @@ namespace PatternSearch
 	}
 
 	//Search
-	vector<SearchResult> DIPWM::Search(string sequence, bool isCore)
+	vector<SearchResult> DIPWM::Search(string sequence,int sequenceDeb, bool isCore)
 	{
 		trie searcher; //searcher.case_insensitive();
 		
@@ -398,8 +398,8 @@ namespace PatternSearch
 			SearchResult sr;
 
 			if (!isCore) {
-				sr.end = token.get_start();
-				sr.start = token.get_end();
+				sr.end = token.get_start() + sequenceDeb;
+				sr.start = token.get_end() + sequenceDeb;
 
 				sr.str = token.get_keyword();
 
@@ -412,6 +412,9 @@ namespace PatternSearch
 				if (sr.start < 0 || sr.end >= sequence.size()) { continue; }
 
 				sr.str = sequence.substr(sr.start, sr.end);
+
+				sr.end += sequenceDeb;
+				sr.start += sequenceDeb;
 
 				if (WordScore(sr.str.c_str()) >= usedSeuil)
 				{

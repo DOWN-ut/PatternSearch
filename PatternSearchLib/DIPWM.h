@@ -61,9 +61,10 @@ namespace PatternSearch
 		/// <summary>
 		/// Search for all occurences of the last calculated words (currently contained in the words-array) in the given sequence.
 		/// </summary>
-		/// <param name="sequence"> : The sequence to analyze</param>
+		/// <param name="sequence"> : The sequence (part) to analyze</param>
+		/// <param name="sequenceDeb"> : The start index of this sequence part relative to the whole sequence</param>
 		/// <returns> : A vector containing each occurrences, with the start-index, the end-index and the word itself</returns>
-		vector<SearchResult> Search(string sequence,bool isCore);
+		vector<SearchResult> Search(string sequence,int sequenceDeb,bool isCore);
 
 		//Prints
 		void DisplayTable();
