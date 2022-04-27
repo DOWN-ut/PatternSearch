@@ -274,7 +274,7 @@ int main(int argc, char *args)
             {
 #if IS_WINDOWS
                 cout << "SDSL n'est disponible que sur Linux" << endl;
-                goto LABELMETHODE;
+                goto METHODE;
 #else
               
                 string fileOut;
