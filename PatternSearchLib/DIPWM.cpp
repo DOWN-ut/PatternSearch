@@ -602,7 +602,7 @@ namespace PatternSearch
 
 	void DIPWM::WritesFinalSequenceWordsFile(vector<SearchResult> results, string currentLocation, string sequenceFile)
 	{
-		string filename = this->id + to_string(this->usedSeuil) + sequenceFile;
+		string filename =  sequenceFile; //this->id + to_string(this->usedSeuil) +
 		
 		string path = currentLocation + "/" + filename;
 		

@@ -241,11 +241,8 @@ int main(int argc, char *args)
 
         LABELMETHODE:
 
-            cout << "Selectionner une méthode a utiliser :" << endl;
-            cout << "a pour Aho_corasik" << endl;
-            cout << "s pour SDSL" << endl;
-            char methode;
-            cin >> methode;
+            cout << "  ||>> Selectionner une méthode a utiliser : <a> pour Aho_corasik, <s> pour SDSL :";
+            char methode; cin >> methode; cout << endl;
 
             if (methode == 'a')
             {
@@ -266,7 +263,11 @@ int main(int argc, char *args)
                 cin >> write;
                 if (write == 'y')
                 {
-                    motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
+                    cout << "  ||>> Entrez le nom du fichier de resultats : "; 
+                    string rName;
+                    cin >> rName; cout << endl;
+                    motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), rName);
+                    cout << "  ||>> Fichier enregistre" << endl;
                 }
             }
             else if (methode == 's')
