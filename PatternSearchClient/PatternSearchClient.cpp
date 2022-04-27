@@ -175,7 +175,7 @@ int main(int argc, char * args)
 
             cout << "  ||>> Generation d'une chaine contenant les lignes [" << debLine << "-" << finLine << "]" << endl;
 
-            char* sequenceArr = new char[sequenceSize]; int sid = 0;
+            char* sequenceArr = new char[sequenceSize]; int sid = 0;  
             for (int i = 0; i < sequenceLines.size(); i++)
             {
                 for (int o = 0; o < sequenceLines.at(i).size(); o++)
