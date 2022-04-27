@@ -1,5 +1,7 @@
 # PatternSearch
 
+Le clonage de ce répertoire peut prendre quelques minutes : certains fichiers sont très lourds (i.e : séquences de chromosomes).
+
 Vous pouvez tester notre projet en lançant directement le fichier 
   "PatternSearch/bin/client" sous Linux
 ou bien
@@ -33,14 +35,11 @@ Linux :
 ```
 
 La librairie est désormais installée. 
-
-  Vous pouvez desinstaller la librairie SDSL de la façon suivant :
+Vous pouvez desinstaller la librairie SDSL de la façon suivant :
 
   ```sh
 ./uninstall.sh
 ```
-
-
   - Ouvrez un terminal dans le répertoire racine "PatternSearch"
   - Entrez la commande "make"
   - Entrez dans le répertoire "bin"
