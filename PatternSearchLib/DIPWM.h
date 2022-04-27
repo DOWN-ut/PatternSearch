@@ -47,7 +47,7 @@ namespace PatternSearch
 		/// <param name="seuil"> : The given threshold, percentage of the max score</param>
 		/// <param name="currentLocation"> : The location of the file containing the words</param>
 		/// <returns> : True if the words were calculated, False if they were recovered in the file</returns>
-		bool EnumerateFullWords(double seuil,string currentLocation, bool displayProgression);
+		bool EnumerateFullWords(double seuil,string currentLocation, bool multithread, bool displayProgression);
 
 		/// <summary>
 		/// Performs the enumeration of all the core-words with a reachable score greater or equal to the given threshold. Check if there's already a file containing these words.

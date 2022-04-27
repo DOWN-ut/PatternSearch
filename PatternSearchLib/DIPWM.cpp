@@ -228,7 +228,7 @@ namespace PatternSearch
 
 		if (isMain) {
 			dipwm->enumerationMutex.lock();
-			dipwm->currentThreadCount--;
+			dipwm->currentThreadCount = max(0, dipwm->currentThreadCount-1);
 			dipwm->enumerationMutex.unlock();
 		}
 	}
@@ -281,52 +281,61 @@ namespace PatternSearch
 		}
 	}
 
-	bool DIPWM::EnumerateFullWords(double seuil, string currentLocation, bool displayProgression)
+	bool DIPWM::EnumerateFullWords(double seuil, string currentLocation, bool multithread, bool displayProgression)
 	{
 		double seuilVal = ((maxValue - minValue) * seuil) + minValue;
 
 		if (SearchFile(seuilVal, currentLocation, false)) { return false; }
 
-		cout << "Launching threads to calculate words with a threshold of " << seuilVal << endl;
+		cout << "Launching " << (multithread ? "threads" : "calculations") << " to calculate words with a threshold of " << seuilVal << endl;
 
 		vector<char> vectW = vector<char>();
 		vector<float> vectS = vector<float>();
 
-		thread threads[4];
+		if (multithread) {
+			thread threads[4];
 
-		for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
-		{
-			char* buffer = new char[wordLength];
-			buffer[0] = c;					//On initialise la première lettre du buffer
-
-			currentThreadCount++;
-			threads[c] = thread(FullWordRecursion, this, &vectW, &vectS, buffer, seuilVal, 1, 0, true);
-		}
-
-		cout << "  ||>> Waiting for all threads" << endl;
-
-		if (displayProgression) {
-			cout << "  || count : "; int lastSize = 0;
-
-			while (currentThreadCount > 0)
+			for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
 			{
-				for (int i = 0; i < lastSize; i++) { cout << '\b'; }
+				char* buffer = new char[wordLength];
+				buffer[0] = c;					//On initialise la première lettre du buffer
 
-				string str = to_string(vectW.size() / wordLength);
-				lastSize = str.size();
-
-				for (int i = 0; i < lastSize; i++) { cout << str[i]; }
-
-				this_thread::sleep_for(chrono::milliseconds(50));
+				currentThreadCount++;
+				threads[c] = thread(FullWordRecursion, this, &vectW, &vectS, buffer, seuilVal, 1, 0, true);
 			}
-			cout << " END " << endl;
-		}
 
-		for (int i = 0; i < 4; i++)
-		{
-			threads[i].join();
-		}
+			cout << "  ||>> Waiting for all threads" << endl;
 
+			if (displayProgression) {
+				cout << "  || count : "; int lastSize = 0;
+
+				while (currentThreadCount > 0)
+				{
+					for (int i = 0; i < lastSize; i++) { cout << '\b'; }
+
+					string str = to_string(vectW.size() / wordLength);
+					lastSize = str.size();
+
+					for (int i = 0; i < lastSize; i++) { cout << str[i]; }
+
+					this_thread::sleep_for(chrono::milliseconds(50));
+				}
+				cout << " END " << endl;
+			}
+
+			for (int i = 0; i < 4; i++)
+			{
+				threads[i].join();
+			}
+		}
+		else {
+			for (char c = 0; c < 4; c++) //On traite séparément les mots qui commencent pas A T C ou G
+			{
+				char* buffer = new char[wordLength];
+				buffer[0] = c;					//On initialise la première lettre du buffer
+				FullWordRecursion(this, &vectW, &vectS, buffer, seuilVal, 1, 0, true);
+			}
+		}
 		cout << "  ||>> Filling arrays " << endl;
 
 		FillEnumerationArray(&vectW, &vectS, wordLength);

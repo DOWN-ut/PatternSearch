@@ -114,7 +114,10 @@ int main(int argc, char *args)
 
         if (mode == 'f')
         {
-            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory(), true);
+            cout << "  ||>> Utiliser plusieurs threads ? <y> ou <n> : ";
+            cin >> mode; cout << endl;
+
+            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory(),mode == 'y', true);
             isCore = false;
         }
         else if (mode == 'c')
