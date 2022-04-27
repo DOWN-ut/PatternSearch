@@ -8,8 +8,15 @@ ou bien
   "PatternSearch/bin/PatternSearchClient.exe" sous Windows
  
 Il vous suffit ensuite de suivre les instructions qui s'affichent dans le terminal.
- Vous pouvez tester différents fichiers DIPWM et différentes séquences.
 
+Vous pouvez tester différents fichiers DIPWM et différentes séquences. Par exemple :
+  - Une DIPWM humaine quelconque avec la séquence du chromosome 15 humain.
+  - Une DIPWM de souris quelconque avec la séquence du chromosome 1 de la souris.
+  - Une DIPWM de souris avec la séquence d'un chromosome humain.
+  - ect ...
+  
+La recherche peut être très longue à s'effectuer (surtout avec beaucoups de mots / sur une longue séquence). N'hésitez donc pas à CTRL-c pour interrompre l'éxecution du programme.
+  
 Vous trouverez différentes DIPWM dans les dossiers "bin/human" et "bin/mouse".
 Vous trouverez différentes séquences dans le dossier "bin/sequences".
 
