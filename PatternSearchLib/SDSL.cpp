@@ -100,7 +100,7 @@ namespace PatternSearch
                     cout << "\e[0m"; // blanc
                     string context = s.substr(m);
                     cout << context.substr(0, context.find_first_of('\n')) << endl;
-
+                    
                     fichier<<s.substr(0,m) << "-"<< score<<"\n";
                 }
             

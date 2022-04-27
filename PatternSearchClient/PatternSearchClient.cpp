@@ -157,7 +157,16 @@ int main(int argc, char *args)
             string sequenceName = sequenceFile;
             sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
 
-        LINECHOICE:
+ 
+
+        METHODE:
+
+            cout << "  ||>> Selectionner une méthode a utiliser : <a> pour Aho_corasik, <s> pour SDSL :";
+            char methode; cin >> methode; cout << endl;
+
+            if (methode == 'a')
+            {
+                       LINECHOICE:
 
             int debLine, finLine;
             cout << "  ||>> Entrez la premiere ligne a analyser : ";
@@ -240,21 +249,13 @@ int main(int argc, char *args)
             string sequence = string(sequenceArr);
 
             cout << "    ||>>  Taille de la chaine : " << sequence.size() << " > " << sequence.substr(0, 50) << " ... " << endl;
-
-        METHODE:
-
-            cout << "  ||>> Selectionner une méthode a utiliser : <a> pour Aho_corasik, <s> pour SDSL :";
-            char methode; cin >> methode; cout << endl;
-
-            if (methode == 'a')
-            {
                 cout << "  ||>> Analyse de la chaine avec aho-corasick" << endl;
 
                 vector<SearchResult> results = motif.Search(sequence, sequenceDeb, isCore); // results.insert(results.end(), r.begin(), r.end());
 
                 cout << "    ||>> " << results.size() << " resultats" << endl;
 
-                for (int i = 0; i < min(results.size(),20); i++)
+                for (int i = 0; i < min(results.size(),size_t(20)); i++)
                 {
                     SearchResult r = results.at(i);
                     cout << "      " << i << "> " << r.start << " - " << r.end << " >> " << r.str << endl;
