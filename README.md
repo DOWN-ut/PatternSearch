@@ -1,12 +1,14 @@
 # PatternSearch
 
+Le clonage de ce répertoire peut prendre quelques minutes : certains fichiers sont très lourds (i.e : séquences de chromosomes).
+
 Vous pouvez tester notre projet en lançant directement le fichier 
   "PatternSearch/bin/client" sous Linux
 ou bien
   "PatternSearch/bin/PatternSearchClient.exe" sous Windows
  
 Il vous suffit ensuite de suivre les instructions qui s'affichent dans le terminal.
-Vous pouvez tester différents fichiers DIPWM et différentes séquences.
+ Vous pouvez tester différents fichiers DIPWM et différentes séquences.
 
 Vous trouverez différentes DIPWM dans les dossiers "bin/human" et "bin/mouse".
 Vous trouverez différentes séquences dans le dossier "bin/sequences".
@@ -33,14 +35,11 @@ Linux :
 ```
 
 La librairie est désormais installée. 
-
-  Vous pouvez desinstaller la librairie SDSL de la façon suivant :
+Vous pouvez desinstaller la librairie SDSL de la façon suivante :
 
   ```sh
 ./uninstall.sh
 ```
-
-
   - Ouvrez un terminal dans le répertoire racine "PatternSearch"
   - Entrez la commande "make"
   - Entrez dans le répertoire "bin"
