@@ -7,7 +7,7 @@ Vous pouvez tester notre projet en lançant directement le fichier
 ou bien
   "PatternSearch/bin/PatternSearchClient.exe" sous Windows
  
-Il vous suffit ensuite de suivre les instructions qui s'affichent dans le terminal.
+Il vous suffit ensuite de suivre les instructions qui s'affichent dans le terminal.\n
 Vous pouvez tester différents fichiers DIPWM et différentes séquences.
 
 Vous trouverez différentes DIPWM dans les dossiers "bin/human" et "bin/mouse".
