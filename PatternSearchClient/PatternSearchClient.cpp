@@ -1,7 +1,14 @@
 
 // PatternSearchClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+
 #if defined(_WIN64_) || defined(_WIN32_) || defined(WIN64) || defined(WIN32)  || defined(_WIN64) || defined(_WIN32)
+    #define IS_WINDOWS 1
+#else
+    #define IS_WINDOWS 0
+#endif
+
+#if IS_WINDOWS
     #include <Windows.h>
     #include "../PatternSearchLib/DIPWM.h"
     #include "../PatternSearchLib/LAT.h"
