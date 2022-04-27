@@ -54,11 +54,11 @@ std::string GetCurrentDirectory()
 #endif
 }
 
-int main(int argc, char *args)
+int main(int argc, char* args)
 {
     cout << "\n\nStart\n\n";
 
-    START:
+START:
 
     cout << "\n\n Entrez le fichier contenant la DIPWM a analyser : " << endl;
     string DIPWMFILE;
@@ -117,7 +117,7 @@ int main(int argc, char *args)
             cout << "  ||>> Utiliser plusieurs threads ? <y> ou <n> : ";
             cin >> mode; cout << endl;
 
-            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory(),mode == 'y', true);
+            seuil = motif.EnumerateFullWords(seuil, GetCurrentDirectory(), mode == 'y', true);
             isCore = false;
         }
         else if (mode == 'c')
@@ -157,7 +157,7 @@ int main(int argc, char *args)
             string sequenceName = sequenceFile;
             sequenceFile = GetCurrentDirectory() + "/" + sequenceFile;
 
- 
+
 
         METHODE:
 
@@ -166,96 +166,97 @@ int main(int argc, char *args)
 
             if (methode == 'a')
             {
-                       LINECHOICE:
+            LINECHOICE:
 
-            int debLine, finLine;
-            cout << "  ||>> Entrez la premiere ligne a analyser : ";
-            cin >> debLine;
-            cout << "  ||>> Entrez la derniere ligne a analyser : ";
-            cin >> finLine;
-            cout << endl;
+                int debLine, finLine;
+                cout << "  ||>> Entrez l'intervale a analyser" << endl;
+                cout << "  ||>> Entrez l'index de la ligne de depart : ";
+                cin >> debLine;
+                cout << "  ||>> Entrez l'index de la ligne de fin : ";
+                cin >> finLine;
+                cout << endl;
 
-            cout << "Lecture des lignes [" << debLine << "-" << finLine << "] de la sequence dans : " << sequenceFile << endl;
+                cout << "Lecture des lignes [" << debLine << "-" << finLine << "] de la sequence dans : " << sequenceFile << endl;
 
-            ifstream fichier(sequenceFile);
-            if (!fichier.good())
-            {
-                cout << "  ||>> Fichier introuvable " << endl;
-                cin.clear();
-                continue;
-            }
-
-            vector<string> sequenceLines; int sequenceSize = 0; int sequenceDeb = 0; string header;  string line;  int lineId = 0;
-            while (getline(fichier, line) && lineId < finLine)
-            {
-                if (lineId == 0)
+                ifstream fichier(sequenceFile);
+                if (!fichier.good())
                 {
-                    header = line;
+                    cout << "  ||>> Fichier introuvable " << endl;
+                    cin.clear();
+                    continue;
                 }
-                else if (lineId >= debLine)
-                {
-                    sequenceLines.push_back(line);
-                    sequenceSize += line.size();
-                }
-                else {
-                    sequenceDeb++;
-                }
-                lineId++;
-            }
 
-            cout << "  ||>> header : " << header << endl;
-            cout << "  ||>> " << sequenceLines.size() << " lignes a analyser" << endl;
-            if (sequenceLines.size() >= 4)
-            {
-                for (int i = 0; i < 4; i++)
+                vector<string> sequenceLines; int sequenceSize = 0; int sequenceDeb = 0; string header;  string line;  int lineId = 0;
+                while (getline(fichier, line) && lineId < finLine)
                 {
-                    int id = min(sequenceLines.size() - 1, (sequenceLines.size() / 3) * i);
-                    if (i == 2)
+                    if (lineId == 0)
                     {
-                        cout << "    ||>> ... ... ..." << endl;
+                        header = line;
                     }
-                    else
+                    else if (lineId >= debLine)
                     {
-                        cout << "    ||>> Ligne " << id + debLine << " : " << sequenceLines.at(id).substr(0, 30) << " ... " << sequenceLines.at(id).size() << endl;
+                        sequenceLines.push_back(line);
+                        sequenceSize += line.size();
+                    }
+                    else {
+                        sequenceDeb++;
+                    }
+                    lineId++;
+                }
+
+                cout << "  ||>> header : " << header << endl;
+                cout << "  ||>> " << sequenceLines.size() << " lignes a analyser" << endl;
+                if (sequenceLines.size() >= 4)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int id = min(sequenceLines.size() - 1, (sequenceLines.size() / 3) * i);
+                        if (i == 2)
+                        {
+                            cout << "    ||>> ... ... ..." << endl;
+                        }
+                        else
+                        {
+                            cout << "    ||>> Ligne " << id + debLine << " : " << sequenceLines.at(id).substr(0, 30) << " ... " << sequenceLines.at(id).size() << endl;
+                        }
                     }
                 }
-            }
-            else
-            {
-                cout << "    ||>> Ligne 0 : " << sequenceLines.at(0).substr(0, 30) << " ... " << sequenceLines.at(0).size() << endl;
-            }
-
-            char c;
-            cout << "  ||>> Entrez <y> pour continuer, <n> pour changer de lignes" << endl;
-            cin >> c;
-
-            if (c != 'y')
-            {
-                goto LINECHOICE;
-            }
-
-            cout << "  ||>> Generation d'une chaine contenant les lignes [" << debLine << "-" << finLine << "]" << endl;
-
-            char *sequenceArr = new char[sequenceSize];
-            int sid = 0;
-            for (int i = 0; i < sequenceLines.size(); i++)
-            {
-                for (int o = 0; o < sequenceLines.at(i).size(); o++)
+                else
                 {
-                    sequenceArr[sid] = sequenceLines.at(i)[o];
-                    sid++;
+                    cout << "    ||>> Ligne 0 : " << sequenceLines.at(0).substr(0, 30) << " ... " << sequenceLines.at(0).size() << endl;
                 }
-            }
-            string sequence = string(sequenceArr);
 
-            cout << "    ||>>  Taille de la chaine : " << sequence.size() << " > " << sequence.substr(0, 50) << " ... " << endl;
+                char c;
+                cout << "  ||>> Entrez <y> pour continuer, <n> pour changer de lignes" << endl;
+                cin >> c;
+
+                if (c != 'y')
+                {
+                    goto LINECHOICE;
+                }
+
+                cout << "  ||>> Generation d'une chaine contenant les lignes [" << debLine << "-" << finLine << "]" << endl;
+
+                char* sequenceArr = new char[sequenceSize];
+                int sid = 0;
+                for (int i = 0; i < sequenceLines.size(); i++)
+                {
+                    for (int o = 0; o < sequenceLines.at(i).size(); o++)
+                    {
+                        sequenceArr[sid] = sequenceLines.at(i)[o];
+                        sid++;
+                    }
+                }
+                string sequence = string(sequenceArr);
+
+                cout << "    ||>>  Taille de la chaine : " << sequence.size() << " > " << sequence.substr(0, 50) << " ... " << endl;
                 cout << "  ||>> Analyse de la chaine avec aho-corasick" << endl;
 
                 vector<SearchResult> results = motif.Search(sequence, sequenceDeb, isCore); // results.insert(results.end(), r.begin(), r.end());
 
                 cout << "    ||>> " << results.size() << " resultats" << endl;
 
-                for (int i = 0; i < min(results.size(),size_t(20)); i++)
+                for (int i = 0; i < min(results.size(), size_t(20)); i++)
                 {
                     SearchResult r = results.at(i);
                     cout << "      " << i << "> " << r.start << " - " << r.end << " >> " << r.str << endl;
@@ -266,7 +267,7 @@ int main(int argc, char *args)
                 cin >> write;
                 if (write == 'y')
                 {
-                    cout << "  ||>> Entrez le nom du fichier de resultats : "; 
+                    cout << "  ||>> Entrez le nom du fichier de resultats : ";
                     string rName;
                     cin >> rName; cout << endl;
                     motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), rName);
@@ -279,7 +280,7 @@ int main(int argc, char *args)
                 cout << "SDSL n'est disponible que sur Linux" << endl;
                 goto METHODE;
 #else
-              
+
                 string fileOut;
                 cout << "Saisir un nom de fichier en sortie" << endl;
                 cin >> fileOut;
