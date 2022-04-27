@@ -87,6 +87,7 @@ namespace PatternSearch
 		void WriteWordsFile(double seuil, string currentLocation,bool isCore);
 		bool ReadWordFile(string fileName, string currentLocation,bool isCore);
 		void WritesFinalSequenceWordsFile(vector<SearchResult> results, string currentLocation, string sequenceFile);
+		string FileName(double seuil,bool isCore);
 
 	private:
 
@@ -118,7 +119,7 @@ namespace PatternSearch
 
 		bool SearchFile(double seuil, string currentLocation,bool isCore);
 
-		string FileName(double seuil,bool isCore);
+		
 
 		void FillEnumerationArray(vector<char> * vect, vector<float> * vectS,int wordL);
 

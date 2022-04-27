@@ -7,10 +7,11 @@
     #include "../PatternSearchLib/LAT.h"
     #include "../PatternSearchLib/LAM.h"
 #else
+    #include "../PatternSearchLib/sdsl-source/include/sdsl/suffix_arrays.hpp"
     #include "../PatternSearchLib/DIPWM.h"
     #include "../PatternSearchLib/LAT.h"
     #include "../PatternSearchLib/LAM.h"
-    #include "../PatternSearchLib/sdsl/fm_index.h"
+    #include "../PatternSearchLib/SDSL.h"
     #include <libgen.h>         // dirname   
     #include <unistd.h>         // readlink
     #include <linux/limits.h>   // PATH_MAX
@@ -115,8 +116,9 @@ int main(int argc, char * args)
 
         cout << "\nEcrire un fichier de mots ? <y> ou <n>" << endl;
         char write; cin >> write;
+     
         if (write == 'y') {
-            motif.WriteWordsFile(motif.UsedSeuil(), GetCurrentDirectory(), isCore);
+    motif.WriteWordsFile(motif.UsedSeuil(), GetCurrentDirectory(), isCore);
         }
 
         char loopSeq = 'y';
@@ -136,14 +138,17 @@ int main(int argc, char * args)
                 cout << "  ||>> Fichier introuvable " << endl;
                 return 0;
             }
+            
+            labelmethode:
+            
             cout<<"Selectionner une méthode a utiliser :"<<endl;
-            cout<<"1 pour Aho_corasik"<<endl;
-            cout<<"2 pour SDSL"<<endl;
-            int methode;
+            cout<<"a pour Aho_corasik"<<endl;
+            cout<<"s pour SDSL"<<endl;
+            char methode;
             cin >> methode;
 
             
-            if(methode == 1){
+            if(methode == 'a'){
 
                 getline(fichier, sequence);
 
@@ -165,13 +170,14 @@ int main(int argc, char * args)
                     motif.WritesFinalSequenceWordsFile(results, GetCurrentDirectory(), sequenceName);
                 }
 
-            }else if(methode == 2 ){
+            }else if(methode == 's' ){
                 string fileOut;
                 cout<<"Saisir un nom de fichier en sortie"<<endl;
                 cin>>fileOut;
-
-                SDSL::fm_index(sequenceFile, sequence,fileOut);
+                string fileList = motif.FileName(motif.UsedSeuil(),isCore);
+                SDSL::fm_index(sequenceName ,fileList ,fileOut);
             }
+            else {goto labelmethode;}
 
 
             
