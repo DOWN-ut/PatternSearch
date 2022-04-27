@@ -8,6 +8,9 @@ ou bien
 Il vous suffit ensuite de suivre les instructions qui s'affichent dans le terminal.
 Vous pouvez tester différents fichiers DIPWM et différentes séquences.
 
+Vous trouverez différentes DIPWM dans les dossiers "bin/human" et "bin/mouse".
+Vous trouverez différentes séquences dans le dossier "bin/sequences".
+
 Pour compiler vous même le projet :
 
 Windows :
