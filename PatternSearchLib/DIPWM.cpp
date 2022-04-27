@@ -398,8 +398,8 @@ namespace PatternSearch
 			SearchResult sr;
 
 			if (!isCore) {
-				sr.end = token.get_start() + sequenceDeb;
-				sr.start = token.get_end() + sequenceDeb;
+				sr.end = token.get_end() + sequenceDeb;
+				sr.start = token.get_start() + sequenceDeb;
 
 				sr.str = token.get_keyword();
 
