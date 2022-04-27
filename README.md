@@ -35,7 +35,7 @@ Linux :
 ```
 
 La librairie est désormais installée. 
-Vous pouvez desinstaller la librairie SDSL de la façon suivant :
+Vous pouvez desinstaller la librairie SDSL de la façon suivante :
 
   ```sh
 ./uninstall.sh
